@@ -1,26 +1,69 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Customizações de tema */
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-fira-code), ui-monospace, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* Base Styles */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: #050505;
+    cursor: default;
+    overflow-x: hidden;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @media (hover: hover) and (pointer: fine) {
+    body {
+      cursor: none;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::selection {
+    background-color: rgba(6, 182, 212, 0.3);
+    color: white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0a0a0a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #06b6d4;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Utilities */
+@layer utilities {
+  .text-stroke {
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.1);
+    color: transparent;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  /* Padrão de Grid Tecnológico para o Background */
+  .bg-grid-pattern {
+    /* background-image: linear-gradient(to right, #ffffff05 1px, transparent 1px),
+      linear-gradient(to bottom, #ffffff05 1px, transparent 1px);
+    background-size: 40px 40px; */
+    display: none;
+  }
 }
