@@ -10,7 +10,7 @@
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-Latest-FF0055?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-**[🌐 Ver Portfolio →]([https://rafaeldegolin.vercel.app](https://rafadegolin-portfolio.vercel.app/))**
+**[🌐 Ver Portfolio →](https://rafadegolin-portfolio.vercel.app/)**
 
 </div>
 
