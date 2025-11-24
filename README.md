@@ -4,8 +4,6 @@
 Full Stack Developer
 **[🌐 Ver Portfolio →](https://rafaeldegolin.vercel.app)**
 
-
-
 </div>
 
 💻 Sobre o Projeto
