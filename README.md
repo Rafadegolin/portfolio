@@ -1,52 +1,75 @@
 <div align="center">
 
-# 🚀 Portfolio Rafael Degolin
+🚀 Portfolio | Rafael Degolin
+Full Stack Developer
+**[🌐 Ver Portfolio →](https://rafaeldegolin.vercel.app)**
 
-### _"Porque usar HTML puro seria muito mainstream"_
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Framer Motion](https://img.shields.io/badge/Framer_Motion-Latest-FF0055?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-
-**[🌐 Ver Portfolio →](https://rafadegolin-portfolio.vercel.app/)**
 
 </div>
 
----
+💻 Sobre o Projeto
+Este repositório contém o código fonte do meu portfolio pessoal.
 
-## 🤔 Sobre Este Projeto
+Mais do que apenas uma vitrine de projetos, utilizei este espaço como um laboratório para aplicar as features mais recentes do ecossistema React. A ideia foi criar uma aplicação estática, mas com a robustez e escalabilidade de um produto real, utilizando Next.js 15 e a nova configuração do Tailwind v4.
 
-Sim, eu sei. Usar **Next.js 15**, **TypeScript**, **Tailwind v4** e **Framer Motion** para um portfolio pessoal é como usar um _foguete da SpaceX para ir à padaria da esquina_.
+Por que essa stack?
+Embora um portfolio pudesse ser feito com tecnologias mais simples, optei por uma abordagem de over-engineering consciente para demonstrar domínio técnico em:
 
-**Mas ei**, se você vai mostrar que é Full Stack Developer, nada mais justo do que provar que sabe usar as ferramentas certas (mesmo que seja um leve exagero) 😅
+Next.js 15 (App Router): Para aproveitar a renderização híbrida e otimização de rotas.
 
-### Por que esse stack?
+TypeScript: Tipagem estrita para garantir manutenibilidade e reduzir erros em tempo de execução.
 
-- ✅ **Next.js 15 (App Router)**: Porque eu podia fazer isso em HTML puro, mas onde está a graça?
-- ✅ **TypeScript**: Para evitar bugs... em um site estático. Safety first! 🛡️
-- ✅ **Tailwind CSS v4**: CSS-in-JS? Nah. CSS-first config é o futuro.
-- ✅ **Framer Motion**: Animações suaves que fazem você esquecer que é só um portfolio.
-- ✅ **Canvas Particles**: Porque partículas flutuantes = desenvolvedor sério.
+Tailwind CSS v4: Explorando a nova engine e configuração CSS-first.
 
-> _"It's not about the destination, it's about over-engineering the journey."_  
-> — Every developer showing off, probably
+Framer Motion: Para criar micro-interações e feedback visual refinado sem comprometer a performance.
 
----
+✨ Principais Features
+UI/UX Moderno: Design system consistente com suporte nativo a Dark Mode.
 
-## ✨ Features (que ninguém pediu, mas estão aqui)
+Animações: Uso de Framer Motion para transições de página, scroll parallax e interações de hover.
 
-- 🎨 **Design Ultra-Moderno**: Gradientes, glassmorphism e um cursor customizado que te persegue
-- 🎬 **Animações Cinematográficas**: Scroll parallax, sticky cards e transições dignas de um filme da Pixar
-- 📱 **Totalmente Responsivo**: Funciona no seu iPhone 15 Pro Max e no Nokia do seu tio
-- 🌙 **Dark Mode Obrigatório**: Porque é 2025, mode claro nem existe mais
-- ⚡ **Performance**: Otimizado para ser mais rápido que um café às 8h da manhã
-- 🤖 **Mockups Interativos**: Simulações de projetos Mobile, Backend e Automation
-- 🎭 **Efeito Noise & Partículas Canvas**: Para aquele toque _artístico_
+Performance: Otimização de imagens, fontes e code-splitting automático do Next.js.
 
----
+Responsividade: Layout fluido que se adapta de mobile a monitores ultrawide.
 
-## 🛠️ Stack Tecnológico
+Canvas API: Implementação leve de partículas para compor o visual da Hero section.
 
-### Frontend
+🛠️ Instalação e Uso
+Para rodar o projeto localmente:
+
+Bash
+
+# 1. Clone o repositório
+git clone https://github.com/Rafadegolin/portfolio-next.git
+
+# 2. Instale as dependências
+cd portfolio-next
+npm install
+
+# 3. Rode o servidor de desenvolvimento
+npm run dev
+O projeto estará rodando em http://localhost:3000.
+
+📂 Estrutura
+A organização segue o padrão do App Router do Next.js:
+
+Plaintext
+
+portfolio-next/
+├── app/
+│   ├── components/  # Componentes reutilizáveis (Atomic Design)
+│   ├── hooks/       # Hooks customizados (useScroll, etc)
+│   ├── layout.tsx   # Layout global e providers
+│   └── page.tsx     # Home page
+├── public/          # Assets estáticos
+└── tailwind.config.ts
+🙋‍♂️ Autor
+Rafael Degolin da Silva
+
+Engenheiro de Computação
+
+Atualmente no VDV Group
+
+📝 Licença
+Este projeto está sob a licença MIT. Sinta-se à vontade para usar o código como base para seus próprios projetos.
