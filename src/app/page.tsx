@@ -641,7 +641,7 @@ const Hero = () => {
             <Badge>Full Stack Developer</Badge>
           </motion.div>
 
-          <h1 className="text-5xl sm:text-7xl md:text-[8rem] font-extrabold tracking-tighter leading-[0.9] text-white mix-blend-lighten">
+          <h1 className="text-6xl sm:text-7xl md:text-[8rem] font-extrabold tracking-tighter leading-[0.9] text-white mix-blend-lighten">
             RAFAEL <br />
             <span className="text-transparent bg-clip-text bg-linear-to-b from-neutral-200 to-neutral-600">
               DEGOLIN
@@ -650,7 +650,7 @@ const Hero = () => {
 
           <div className="h-px w-16 md:w-24 bg-linear-to-r from-transparent via-cyan-500 to-transparent my-4 md:my-6" />
 
-          <p className="text-neutral-400 text-sm md:text-2xl font-light max-w-3xl tracking-tight px-4">
+          <p className="text-neutral-400 text-2xl md:text-2xl font-light max-w-3xl tracking-tight px-4">
             Desenvolvedor Full Stack & Engenheiro da Computação.{" "}
             <br className="hidden md:block" />
             Criando ecossistemas digitais completos potencializados por{" "}
@@ -900,7 +900,7 @@ const Contact = () => (
   >
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-cyan-900/20 via-transparent to-transparent" />
     <div className="relative z-10 text-center px-4 md:px-6">
-      <h2 className="text-4xl md:text-9xl font-bold text-white mb-6 md:mb-14 tracking-tighter">
+      <h2 className="text-6xl md:text-9xl font-bold text-white mb-6 md:mb-14 tracking-tighter">
         Vamos construir <br /> o futuro?
       </h2>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-8">
