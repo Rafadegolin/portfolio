@@ -19,7 +19,7 @@
 
 ## 💻 Sobre o Projeto
 
-Este repositório contém o código fonte do meu portfolio pessoal.
+Este repositório contém o código fonte do meu portfolio pessoal (ainda em construção).
 
 Mais do que apenas uma vitrine de projetos, utilizei este espaço como um laboratório para aplicar as features mais recentes do ecossistema React. A ideia foi criar uma aplicação estática, mas com a robustez e escalabilidade de um produto real, utilizando **Next.js 15** e a nova configuração do **Tailwind v4**.
 
