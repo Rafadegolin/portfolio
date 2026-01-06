@@ -85,43 +85,53 @@ const CodeVisual = () => (
       <div className="w-3 h-3 rounded-full bg-red-500" />
       <div className="w-3 h-3 rounded-full bg-yellow-500" />
       <div className="w-3 h-3 rounded-full bg-green-500" />
-      <span className="ml-auto text-neutral-500">server.ts</span>
+      <span className="ml-auto text-neutral-500">extension.ts</span>
     </div>
-    <div className="flex-1 overflow-hidden opacity-80">
-      <span className="text-purple-400">import</span> {"{"}{" "}
-      <span className="text-blue-400">ERP_Sync</span> {"}"}{" "}
-      <span className="text-purple-400">from</span>{" "}
-      <span className="text-orange-300">&apos;./services&apos;</span>;
+        <div className="flex-1 overflow-hidden opacity-80 leading-relaxed">
+      <span className="text-purple-400">await</span> vscode.window.
+      <span className="text-yellow-300">withProgress</span>(
+      <br />
+      &nbsp;&nbsp;{"{"}
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;location: vscode.ProgressLocation.Notification,
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;title: titles[mode],
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;cancellable: <span className="text-blue-400">true</span>,
+      <br />
+      &nbsp;&nbsp;{"}"},
+      <br />
+      &nbsp;&nbsp;<span className="text-purple-400">async</span> (progress, token) =&gt; {"{"}
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-400">try</span> {"{"}
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-green-600">// Passo 1: Buscar arquivos</span>
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;progress.<span className="text-yellow-300">report</span>({"{"}
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message: mode.<span className="text-yellow-300">includes</span>(<span className="text-orange-300">"en"</span>) ? <span className="text-orange-300">"Scanning files..."</span> : <span className="text-orange-300">"Escaneando arquivos..."</span>,
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"}"});
       <br />
       <br />
-      <span className="text-purple-400">async function</span>{" "}
-      <span className="text-yellow-300">syncData</span>() {"{"}
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">const</span> files = <span className="text-purple-400">await</span> vscode.workspace.
+      <span className="text-yellow-300">findFiles</span>(
       <br />
-      &nbsp;&nbsp;
-      <span className="text-neutral-400">// Legacy system fetch</span>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-orange-300">"**/*.{"{"}ts,tsx,js,jsx...{"}"}"</span>,
       <br />
-      &nbsp;&nbsp;<span className="text-blue-400">const</span> data ={" "}
-      <span className="text-purple-400">await</span> ERP.
-      <span className="text-yellow-300">fetch</span>();
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-orange-300">"{"{"}**/node_modules/**,**/dist/**...{"}"}"</span>
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);
       <br />
       <br />
-      &nbsp;&nbsp;<span className="text-purple-400">if</span> (data.
-      <span className="text-blue-400">len</span> &gt;{" "}
-      <span className="text-green-300">1k</span>) {"{"}
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-400">if</span> (token.isCancellationRequested) {"{"}
       <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-400">
-        await
-      </span>{" "}
-      <span className="text-yellow-300">queue</span>(data);
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-400">return</span>;
       <br />
-      &nbsp;&nbsp;{"}"}
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"}"}
       <br />
-      &nbsp;&nbsp;<span className="text-blue-400">console</span>.
-      <span className="text-yellow-300">log</span>(
-      <span className="text-green-300">&quot;Done 🚀&quot;</span>);
-      <br />
-      {"}"}
     </div>
+
   </div>
 );
 
@@ -273,15 +283,21 @@ const NoiseOverlay = () => (
 const CustomCursor = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const smoothX = useSpring(mouseX, { damping: 20, stiffness: 300, mass: 0.5 });
-  const smoothY = useSpring(mouseY, { damping: 20, stiffness: 300, mass: 0.5 });
+  // Optimized spring physics for lower latency (snappier feel)
+  const smoothX = useSpring(mouseX, { damping: 30, stiffness: 500, mass: 0.1 });
+  const smoothY = useSpring(mouseY, { damping: 30, stiffness: 500, mass: 0.1 });
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
     const moveCursor = (e: MouseEvent) => {
+      // Only update position on mousemove - minimal overhead
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
+    };
+
+    const checkHover = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      // Optimization: Check hover only on element boundaries
       setIsHovering(
         !!(
           target.tagName === "BUTTON" ||
@@ -291,8 +307,13 @@ const CustomCursor = () => {
         )
       );
     };
-    window.addEventListener("mousemove", moveCursor);
-    return () => window.removeEventListener("mousemove", moveCursor);
+
+    window.addEventListener("mousemove", moveCursor, { passive: true });
+    window.addEventListener("mouseover", checkHover, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", moveCursor);
+      window.removeEventListener("mouseover", checkHover);
+    };
   }, [mouseX, mouseY]);
 
   return (
@@ -451,13 +472,21 @@ const Badge = ({ children }: BadgeProps) => (
   </span>
 );
 
+interface ProjectRepo {
+  name: string;
+  url: string;
+}
+
 interface StickyCardProps {
   i: number;
   title: string;
   desc: string;
   tags: string[];
   gradient: string;
-  type: string;
+  visualType: "mobile" | "backend" | "automation";
+  customLabel?: string;
+  image?: string;
+  repos?: ProjectRepo[];
   stats: Array<{ value: string; label: string }>;
   progress: any;
   range: number[];
@@ -470,7 +499,10 @@ const StickyCard = ({
   desc,
   tags,
   gradient,
-  type,
+  visualType,
+  customLabel,
+  image,
+  repos,
   stats,
   progress,
   range,
@@ -479,7 +511,17 @@ const StickyCard = ({
   const scale = useTransform(progress, range, [1, targetScale]);
 
   const renderVisual = () => {
-    switch (type) {
+    if (image) {
+      return (
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-full object-cover object-top rounded-xl shadow-2xl"
+        />
+      );
+    }
+
+    switch (visualType) {
       case "mobile":
         return <PhoneMockup />;
       case "backend":
@@ -504,17 +546,17 @@ const StickyCard = ({
         <div className="relative w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-between z-10 bg-neutral-900/50 backdrop-blur-sm border-t md:border-t-0 md:border-r border-white/5">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              {type === "mobile" && (
+              {visualType === "mobile" && (
                 <Smartphone size={20} className="text-orange-400" />
               )}
-              {type === "backend" && (
+              {visualType === "backend" && (
                 <Terminal size={20} className="text-blue-400" />
               )}
-              {type === "automation" && (
+              {visualType === "automation" && (
                 <Workflow size={20} className="text-purple-400" />
               )}
               <span className="text-xs md:text-sm font-mono text-neutral-500 uppercase tracking-widest">
-                {type} Project
+                {customLabel || `${visualType} Project`}
               </span>
             </div>
             <h3 className="text-2xl md:text-5xl font-bold text-white leading-tight mb-4 md:mb-6">
@@ -523,6 +565,23 @@ const StickyCard = ({
             <p className="text-sm md:text-lg text-neutral-300 leading-relaxed mb-6">
               {desc}
             </p>
+
+            {repos && repos.length > 0 && (
+              <div className="flex flex-wrap gap-3 mb-6">
+                {repos.map((repo, idx) => (
+                  <a
+                    key={idx}
+                    href={repo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs md:text-sm font-medium text-white transition-colors"
+                  >
+                    <Github size={14} />
+                    {repo.name}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           <div>
@@ -745,38 +804,79 @@ const Projects = () => {
     offset: ["start start", "end end"],
   });
 
-  const projects = [
+  const projects: Omit<
+    StickyCardProps,
+    "i" | "progress" | "range" | "targetScale"
+  >[] = [
     {
-      title: "Field Ops Mobile App",
-      desc: "App Full Stack (React Native + Node.js) para equipes de campo. Inclui sincronização offline-first e painel administrativo web para gestão em tempo real.",
-      tags: ["React Native", "Node.js", "PostgreSQL", "Supabase"],
-      gradient: "from-orange-500 to-red-600",
-      type: "mobile",
+      title: "Fala Facilitada",
+      desc: "App de Comunicação Alternativa (PECS) para autismo. 100% offline-first, garantindo voz e autonomia para quem precisa, em qualquer lugar.",
+      tags: ["React Native", "Expo", "TypeScript", "Offline-First"],
+      gradient: "from-orange-500 to-amber-500",
+      visualType: "mobile",
+      customLabel: "Mobile App • TCC",
       stats: [
-        { value: "Offline", label: "Capability" },
-        { value: "Full Stack", label: "Architecture" },
+        { value: "100%", label: "Offline" },
+        { value: "Acessível", label: "Inclusivo" },
       ],
     },
     {
-      title: "ERP Integration Hub",
-      desc: "Sistema Backend robusto conectando múltiplos ERPs. Arquitetura de microsserviços para processamento massivo de dados de vendas e estoque.",
-      tags: ["Python", "Node.js", "SQL", "Redis"],
-      gradient: "from-blue-600 to-cyan-500",
-      type: "backend",
+      title: "VDV Hub",
+      desc: "O sistema nervoso central do VDV Group. ERP Full Stack que unifica CRM, financeiro e jornada do cliente em uma experiência fluida e personalizada.",
+      tags: ["Next.js", "NestJS", "PostgreSQL", "Zustand"],
+      gradient: "from-blue-600 to-indigo-600",
+      visualType: "backend",
+      customLabel: "Full Stack Ecosystem",
+      image: "/projects/vdv-hub.png",
       stats: [
-        { value: "500k+", label: "Transações/Mês" },
-        { value: "Scalable", label: "Backend" },
+        { value: "360°", label: "Gestão" },
+        { value: "Centralized", label: "Data Source" },
       ],
     },
     {
-      title: "AI Automation Platform",
-      desc: "Plataforma interna para orquestração de fluxos de trabalho. Interface React para controle de agentes de IA e backend Python para processamento lógico.",
-      tags: ["React", "Python", "n8n", "OpenAI"],
-      gradient: "from-purple-600 to-pink-500",
-      type: "automation",
+      title: "Miu Controle",
+      desc: "Finanças pessoais sem fricção. Unindo App Mobile e Web com IA preditiva para transformar a saúde financeira em menos de 5 segundos.",
+      tags: ["NestJS", "Redis", "Predictive AI", "Mobile & Web"],
+      gradient: "from-emerald-500 to-teal-500",
+      visualType: "automation",
+      customLabel: "Full Stack + Mobile",
+      image: "/projects/miu-controle.png",
+      repos: [
+        { name: "Backend", url: "https://github.com/Rafadegolin/miu-controle-backend" },
+        { name: "Frontend", url: "https://github.com/Rafadegolin/miu-controle-frontend" },
+      ],
       stats: [
-        { value: "40h", label: "Tempo Salvo/Semana" },
-        { value: "End-to-End", label: "Solution" },
+        { value: "-93%", label: "Latência" },
+        { value: "< 5s", label: "Registro" },
+      ],
+    },
+    {
+      title: "VS Code AI Suite",
+      desc: "Power tools para DX. 'Project Architect' para análise estrutural e 'GitIssue Bridge' para conectar issues ao código.",
+      tags: ["TypeScript", "VS Code API", "OpenAI", "AST"],
+      gradient: "from-purple-600 to-fuchsia-600",
+      visualType: "backend",
+      customLabel: "DevTools & AI Engineering",
+      repos: [
+        { name: "Project Architect", url: "https://github.com/Rafadegolin/project-architect-ai" },
+        { name: "GitIssue Bridge", url: "https://github.com/Rafadegolin/gitIssue-bridge" },
+      ],
+      stats: [
+        { value: "2", label: "Extensions" },
+        { value: "AI-Powered", label: "Analysis" },
+      ],
+    },
+    {
+      title: "AI SDR Agent",
+      desc: "SDR 100% autônomo. Recupera leads, agenda reuniões e gera contratos automaticamente. Uma máquina de vendas que nunca dorme.",
+      tags: ["n8n", "Supabase", "Redis", "LLMs"],
+      gradient: "from-yellow-500 to-orange-600",
+      visualType: "automation",
+      customLabel: "AI Agent • Automation",
+      image: "/projects/ai-sdr.png",
+      stats: [
+        { value: "Auto", label: "Recovery" },
+        { value: "End-to-End", label: "Sales" },
       ],
     },
   ];
