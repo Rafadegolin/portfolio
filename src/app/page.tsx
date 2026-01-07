@@ -797,6 +797,141 @@ const About = () => {
   );
 };
 
+const Career = () => {
+  const experiences = [
+    {
+      company: "VDV Group",
+      role: "UX & Frontend Developer",
+      period: "Ago 2025 - Momento",
+      description:
+        "Atuando no novo setor de tecnologia, transformando operações internas em ecossistemas digitais de alta performance.",
+      achievements: [
+        "Arquitetura full-stack (Next.js + NestJS) para centralização de gestão.",
+        "Dashboard de métricas integrado à API do Mercado Livre.",
+        "Automação de contratos e CRM com N8N e Agentes de IA.",
+        "Treinamento de equipes para adoção de fluxos com IA.",
+      ],
+      techs: ["Next.js", "NestJS", "PostgreSQL", "N8N", "AI Agents"],
+    },
+    {
+      company: "VDV Group",
+      role: "Especialista em Olist ERP",
+      period: "Out 2024 - Ago 2025",
+      description:
+        "Otimização operacional e implementação estratégica de ERP, focando em escalabilidade e organização de dados.",
+      achievements: [
+        "Implementação e organização de produtos no Olist ERP.",
+        "Treinamento de clientes para uso eficiente da plataforma.",
+        "Criação de dashboards e KPIs para agilizar a operação diária.",
+      ],
+      techs: ["ERP", "Gestão de Projetos", "Análise de Dados"],
+    },
+    {
+      company: "Motorola Mobility",
+      role: "QA Tester & Dogfooding",
+      period: "Jan 2022 - Set 2024",
+      description:
+        "Garantia de qualidade em escala global, liderando testes de protótipos e assegurando a excelência de software.",
+      achievements: [
+        "Gestão de centenas de protótipos em programas de Dogfooding.",
+        "QA Tester em app Android e portal web de uso interno.",
+        "Redução significativa de bugs em lançamentos globais.",
+        "Aumento da produtividade do time através de metodologias ágeis.",
+      ],
+      techs: ["QA", "Android", "Java/Kotlin", "MySQL","Scrum", "Jira", "Dogfooding"],
+    },
+  ];
+
+  return (
+    <Section id="career" className="relative">
+      <div className="max-w-7xl mx-auto w-full relative z-10 px-4">
+        <div className="mb-16 md:text-center max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-6xl font-bold text-white mb-6">
+            Trajetória Profissional
+          </h2>
+          <p className="text-neutral-400 text-lg">
+            Evolução constante: de grandes corporações a startups ágeis,
+            transformando problemas complexos em soluções tecnológicas.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8 relative">
+          {/* Linha conectora vertical para desktop */}
+          <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-cyan-500/0 via-cyan-500/20 to-cyan-500/0 hidden md:block" />
+
+          {experiences.map((exp, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: i * 0.2 }}
+              className={`relative flex flex-col md:flex-row gap-8 ${
+                i % 2 === 0 ? "md:flex-row-reverse" : ""
+              }`}
+            >
+              {/* Ponto na timeline */}
+              <div className="absolute left-0 md:left-1/2 w-4 h-4 rounded-full bg-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.6)] md:-translate-x-1/2 top-8 z-20 hidden md:block" />
+
+              <div className="w-full md:w-1/2">
+                <SpotlightCard
+                  className={`h-full border-l-4 ${
+                    i === 0
+                      ? "border-l-cyan-400"
+                      : i === 1
+                      ? "border-l-purple-400"
+                      : "border-l-orange-400"
+                  }`}
+                >
+                  <div className="flex flex-col h-full">
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                      <Badge>{exp.period}</Badge>
+                      <span className="text-xs font-mono text-neutral-500 uppercase tracking-widest">
+                        {exp.company}
+                      </span>
+                    </div>
+
+                    <h3 className="text-2xl font-bold text-white mb-2">
+                      {exp.role}
+                    </h3>
+                    <p className="text-neutral-400 mb-6 text-sm leading-relaxed">
+                      {exp.description}
+                    </p>
+
+                    <ul className="space-y-3 mb-8">
+                      {exp.achievements.map((item, k) => (
+                        <li key={k} className="flex items-start gap-3">
+                          <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-500/50 shrink-0" />
+                          <span className="text-neutral-300 text-sm">
+                            {item}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="flex flex-wrap gap-2 mt-auto">
+                      {exp.techs.map((tech, t) => (
+                        <span
+                          key={t}
+                          className="px-2 py-1 text-[10px] font-mono text-white/40 bg-white/5 rounded border border-white/5"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </SpotlightCard>
+              </div>
+              <div className="hidden md:block w-1/2" />{" "}
+              {/* Espaço vazio para manter o grid */}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </Section>
+  );
+};
+
 const Projects = () => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -885,7 +1020,7 @@ const Projects = () => {
     <section ref={container} id="projetos" className="relative pt-10">
       <div className="py-10 md:py-20 px-4 md:px-6 max-w-7xl mx-auto">
         <h2 className="text-3xl md:text-7xl font-bold text-white mb-10 md:mb-20 text-center">
-          Projetos Full Stack
+          Alguns Projetos
         </h2>
         {projects.map((project, i) => {
           const targetScale = 1 - (projects.length - i) * 0.05;
@@ -1065,6 +1200,13 @@ export default function Home() {
               SOBRE
             </a>
             <a
+              href="#career"
+              onClick={handleScroll}
+              className="hover:text-cyan-400 transition-colors cursor-pointer"
+            >
+              TRAJETÓRIA
+            </a>
+            <a
               href="#projetos"
               onClick={handleScroll}
               className="hover:text-cyan-400 transition-colors cursor-pointer"
@@ -1106,6 +1248,13 @@ export default function Home() {
                 SOBRE
               </a>
               <a
+                href="#career"
+                onClick={handleScroll}
+                className="text-white hover:text-cyan-400"
+              >
+                TRAJETÓRIA
+              </a>
+              <a
                 href="#projetos"
                 onClick={handleScroll}
                 className="text-white hover:text-cyan-400"
@@ -1127,6 +1276,7 @@ export default function Home() {
           <Hero />
           <About />
           <Skills />
+          <Career />
           <Projects />
           <Contact />
         </main>
