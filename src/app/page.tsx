@@ -87,7 +87,7 @@ const CodeVisual = () => (
       <div className="w-3 h-3 rounded-full bg-green-500" />
       <span className="ml-auto text-neutral-500">extension.ts</span>
     </div>
-        <div className="flex-1 overflow-hidden opacity-80 leading-relaxed">
+    <div className="flex-1 overflow-hidden opacity-80 leading-relaxed">
       <span className="text-purple-400">await</span> vscode.window.
       <span className="text-yellow-300">withProgress</span>(
       <br />
@@ -97,41 +97,60 @@ const CodeVisual = () => (
       <br />
       &nbsp;&nbsp;&nbsp;&nbsp;title: titles[mode],
       <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;cancellable: <span className="text-blue-400">true</span>,
+      &nbsp;&nbsp;&nbsp;&nbsp;cancellable:{" "}
+      <span className="text-blue-400">true</span>,
       <br />
       &nbsp;&nbsp;{"}"},
       <br />
-      &nbsp;&nbsp;<span className="text-purple-400">async</span> (progress, token) =&gt; {"{"}
+      &nbsp;&nbsp;<span className="text-purple-400">async</span> (progress,
+      token) =&gt; {"{"}
       <br />
       &nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-400">try</span> {"{"}
       <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-green-600">// Passo 1: Buscar arquivos</span>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span className="text-green-600">// Passo 1: Buscar arquivos</span>
       <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;progress.<span className="text-yellow-300">report</span>({"{"}
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;progress.
+      <span className="text-yellow-300">report</span>({"{"}
       <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message: mode.<span className="text-yellow-300">includes</span>(<span className="text-orange-300">"en"</span>) ? <span className="text-orange-300">"Scanning files..."</span> : <span className="text-orange-300">"Escaneando arquivos..."</span>,
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;message: mode.
+      <span className="text-yellow-300">includes</span>(
+      <span className="text-orange-300">"en"</span>) ?{" "}
+      <span className="text-orange-300">"Scanning files..."</span> :{" "}
+      <span className="text-orange-300">"Escaneando arquivos..."</span>,
       <br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"}"});
       <br />
       <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-blue-400">const</span> files = <span className="text-purple-400">await</span> vscode.workspace.
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span className="text-blue-400">const</span> files ={" "}
+      <span className="text-purple-400">await</span> vscode.workspace.
       <span className="text-yellow-300">findFiles</span>(
       <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-orange-300">"**/*.{"{"}ts,tsx,js,jsx...{"}"}"</span>,
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span className="text-orange-300">
+        "**/*.{"{"}ts,tsx,js,jsx...{"}"}"
+      </span>
+      ,
       <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-orange-300">"{"{"}**/node_modules/**,**/dist/**...{"}"}"</span>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span className="text-orange-300">
+        "{"{"}**/node_modules/**,**/dist/**...{"}"}"
+      </span>
       <br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);
       <br />
       <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-400">if</span> (token.isCancellationRequested) {"{"}
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span className="text-purple-400">if</span>{" "}
+      (token.isCancellationRequested) {"{"}
       <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span className="text-purple-400">return</span>;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span className="text-purple-400">return</span>;
       <br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{"}"}
       <br />
     </div>
-
   </div>
 );
 
@@ -304,7 +323,7 @@ const CustomCursor = () => {
           target.tagName === "A" ||
           target.closest("button") ||
           target.closest("a")
-        )
+        ),
       );
     };
 
@@ -781,7 +800,7 @@ const About = () => {
               ineficiências.
             </p>
             <p>
-              Atualmente no <strong>VDV Group</strong>, lidero iniciativas
+              Atualmente na <strong>Pronix</strong>, lidero iniciativas
               tecnológicas que transformam operação em vantagem competitiva.
             </p>
           </div>
@@ -800,8 +819,8 @@ const About = () => {
 const Career = () => {
   const experiences = [
     {
-      company: "VDV Group",
-      role: "UX & Frontend Developer",
+      company: "Pronix",
+      role: "Full Stack Developer",
       period: "Ago 2025 - Momento",
       description:
         "Atuando no novo setor de tecnologia, transformando operações internas em ecossistemas digitais de alta performance.",
@@ -814,7 +833,7 @@ const Career = () => {
       techs: ["Next.js", "NestJS", "PostgreSQL", "N8N", "AI Agents"],
     },
     {
-      company: "VDV Group",
+      company: "Pronix",
       role: "Especialista em Olist ERP",
       period: "Out 2024 - Ago 2025",
       description:
@@ -838,7 +857,15 @@ const Career = () => {
         "Redução significativa de bugs em lançamentos globais.",
         "Aumento da produtividade do time através de metodologias ágeis.",
       ],
-      techs: ["QA", "Android", "Java/Kotlin", "MySQL","Scrum", "Jira", "Dogfooding"],
+      techs: [
+        "QA",
+        "Android",
+        "Java/Kotlin",
+        "MySQL",
+        "Scrum",
+        "Jira",
+        "Dogfooding",
+      ],
     },
   ];
 
@@ -872,15 +899,14 @@ const Career = () => {
             >
               {/* Ponto na timeline */}
               <div className="absolute left-0 md:left-1/2 w-4 h-4 rounded-full bg-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.6)] md:-translate-x-1/2 top-8 z-20 hidden md:block" />
-
               <div className="w-full md:w-1/2">
                 <SpotlightCard
                   className={`h-full border-l-4 ${
                     i === 0
                       ? "border-l-cyan-400"
                       : i === 1
-                      ? "border-l-purple-400"
-                      : "border-l-orange-400"
+                        ? "border-l-purple-400"
+                        : "border-l-orange-400"
                   }`}
                 >
                   <div className="flex flex-col h-full">
@@ -956,8 +982,8 @@ const Projects = () => {
       ],
     },
     {
-      title: "VDV Hub",
-      desc: "O sistema nervoso central do VDV Group. ERP Full Stack que unifica CRM, financeiro e jornada do cliente em uma experiência fluida e personalizada.",
+      title: "Pronix Hub",
+      desc: "O sistema nervoso central do Pronix. ERP Full Stack que unifica CRM, financeiro e jornada do cliente em uma experiência fluida e personalizada.",
       tags: ["Next.js", "NestJS", "PostgreSQL", "Zustand"],
       gradient: "from-blue-600 to-indigo-600",
       visualType: "backend",
@@ -977,8 +1003,14 @@ const Projects = () => {
       customLabel: "Full Stack + Mobile",
       image: "/projects/miu-controle.png",
       repos: [
-        { name: "Backend", url: "https://github.com/Rafadegolin/miu-controle-backend" },
-        { name: "Frontend", url: "https://github.com/Rafadegolin/miu-controle-frontend" },
+        {
+          name: "Backend",
+          url: "https://github.com/Rafadegolin/miu-controle-backend",
+        },
+        {
+          name: "Frontend",
+          url: "https://github.com/Rafadegolin/miu-controle-frontend",
+        },
       ],
       stats: [
         { value: "-93%", label: "Latência" },
@@ -993,8 +1025,14 @@ const Projects = () => {
       visualType: "backend",
       customLabel: "DevTools & AI Engineering",
       repos: [
-        { name: "Project Architect", url: "https://github.com/Rafadegolin/project-architect-ai" },
-        { name: "GitIssue Bridge", url: "https://github.com/Rafadegolin/gitIssue-bridge" },
+        {
+          name: "Project Architect",
+          url: "https://github.com/Rafadegolin/project-architect-ai",
+        },
+        {
+          name: "GitIssue Bridge",
+          url: "https://github.com/Rafadegolin/gitIssue-bridge",
+        },
       ],
       stats: [
         { value: "2", label: "Extensions" },
