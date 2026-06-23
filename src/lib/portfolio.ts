@@ -178,15 +178,12 @@ function mapSkillGroup(g: ApiSkillGroup): Skill {
  * resposta voltam como `undefined` p/ o componente cair no default embutido.
  */
 export async function loadPortfolio(): Promise<Partial<PortfolioData> | null> {
-  const url = process.env.NEXT_PUBLIC_PORTFOLIO_API;
-  if (!url) {
-    console.warn("[portfolio] NEXT_PUBLIC_PORTFOLIO_API não definida — usando conteúdo padrão.");
-    return null;
-  }
   try {
-    const res = await fetch(url, { headers: { Accept: "application/json" } });
+    // Mesma origem: a rota /api/portfolio busca o Proposa no servidor (sem CORS,
+    // segue o redirect apex→www). A URL upstream fica em PORTFOLIO_API (server).
+    const res = await fetch("/api/portfolio", { headers: { Accept: "application/json" } });
     if (!res.ok) {
-      console.warn(`[portfolio] API respondeu ${res.status} em ${url} — usando conteúdo padrão.`);
+      console.warn(`[portfolio] /api/portfolio respondeu ${res.status} — usando conteúdo padrão.`);
       return null;
     }
     const data = (await res.json()) as ApiPortfolio;
@@ -195,7 +192,7 @@ export async function loadPortfolio(): Promise<Partial<PortfolioData> | null> {
     const skills = (data.profile?.skillGroups ?? []).map(mapSkillGroup);
     if (!experiences.length && !projects.length && !skills.length) {
       console.warn(
-        `[portfolio] API ${url} respondeu OK, mas veio vazia — o portfolio está publicado e com itens publicados?`,
+        `[portfolio] /api/portfolio veio vazio — PORTFOLIO_API setada? portfolio publicado e com itens publicados?`,
       );
     } else {
       console.info(
@@ -208,7 +205,7 @@ export async function loadPortfolio(): Promise<Partial<PortfolioData> | null> {
       skills: skills.length ? skills : undefined,
     };
   } catch (e) {
-    console.warn(`[portfolio] Falha ao buscar ${url} — usando conteúdo padrão.`, e);
+    console.warn(`[portfolio] Falha ao buscar /api/portfolio — usando conteúdo padrão.`, e);
     return null;
   }
 }
