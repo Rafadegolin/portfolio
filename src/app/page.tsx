@@ -43,6 +43,13 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import {
+  loadPortfolio,
+  type Experience,
+  type PortfolioData,
+  type Project,
+  type Skill,
+} from "@/lib/portfolio";
 
 // --- CUSTOM HOOKS ---
 const wrap = (min: number, max: number, v: number) => {
@@ -491,22 +498,8 @@ const Badge = ({ children }: BadgeProps) => (
   </span>
 );
 
-interface ProjectRepo {
-  name: string;
-  url: string;
-}
-
-interface StickyCardProps {
+interface StickyCardProps extends Project {
   i: number;
-  title: string;
-  desc: string;
-  tags: string[];
-  gradient: string;
-  visualType: "mobile" | "backend" | "automation";
-  customLabel?: string;
-  image?: string;
-  repos?: ProjectRepo[];
-  stats: Array<{ value: string; label: string }>;
   progress: any;
   range: number[];
   targetScale: number;
@@ -521,6 +514,7 @@ const StickyCard = ({
   visualType,
   customLabel,
   image,
+  imageContain,
   repos,
   stats,
   progress,
@@ -535,7 +529,9 @@ const StickyCard = ({
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover object-top rounded-xl shadow-2xl"
+          className={`w-full h-full rounded-xl shadow-2xl ${
+            imageContain ? "object-contain" : "object-cover object-top"
+          }`}
         />
       );
     }
@@ -816,8 +812,8 @@ const About = () => {
   );
 };
 
-const Career = () => {
-  const experiences = [
+const Career = ({ override }: { override?: Experience[] }) => {
+  const experiences: Experience[] = override ?? [
     {
       company: "Pronix",
       role: "Full Stack Developer",
@@ -958,17 +954,14 @@ const Career = () => {
   );
 };
 
-const Projects = () => {
+const Projects = ({ override }: { override?: Project[] }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
     target: container,
     offset: ["start start", "end end"],
   });
 
-  const projects: Omit<
-    StickyCardProps,
-    "i" | "progress" | "range" | "targetScale"
-  >[] = [
+  const projects: Project[] = override ?? [
     {
       title: "Fala Facilitada",
       desc: "App de Comunicação Alternativa (PECS) para autismo. 100% offline-first, garantindo voz e autonomia para quem precisa, em qualquer lugar.",
@@ -1078,8 +1071,8 @@ const Projects = () => {
   );
 };
 
-const Skills = () => {
-  const skills = [
+const Skills = ({ override }: { override?: Skill[] }) => {
+  const skills: Skill[] = override ?? [
     {
       icon: Monitor,
       title: "Frontend Engineering",
@@ -1203,6 +1196,19 @@ const Contact = () => (
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Conteúdo gerenciado no Proposa (API pública). Sem API/erro → mantém o
+  // conteúdo padrão embutido nas seções.
+  const [portfolio, setPortfolio] = useState<Partial<PortfolioData> | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    loadPortfolio().then((data) => {
+      if (active && data) setPortfolio(data);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -1313,9 +1319,9 @@ export default function Home() {
         <main>
           <Hero />
           <About />
-          <Skills />
-          <Career />
-          <Projects />
+          <Skills override={portfolio?.skills} />
+          <Career override={portfolio?.experiences} />
+          <Projects override={portfolio?.projects} />
           <Contact />
         </main>
         <footer className="py-6 text-center text-neutral-600 text-[10px] md:text-xs uppercase tracking-widest border-t border-white/5 bg-neutral-950">
