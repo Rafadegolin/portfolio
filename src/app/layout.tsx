@@ -8,8 +8,11 @@ const inter = Inter({
   display: "swap",
 });
 
+// font-mono so aparece em labels e blocos de codigo: um peso basta.
+// Inter fica sem restricao de peso — o site usa 300/400/500/700/800/900.
 const firaCode = Fira_Code({
   subsets: ["latin"],
+  weight: ["400"],
   variable: "--font-fira-code",
   display: "swap",
 });
@@ -40,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="scroll-smooth">
+    <html lang="pt-BR">
       <body
         className={`${inter.variable} ${firaCode.variable} antialiased bg-[#050505] text-white`}
       >

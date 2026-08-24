@@ -12,7 +12,13 @@
     font-family: var(--font-sans);
     background-color: #050505;
     cursor: default;
-    overflow-x: hidden;
+  }
+
+  /* `clip` nao cria scroll container (ao contrario de `hidden`), entao nao
+     compete com `position: sticky` nem desativa scroll anchoring. */
+  html,
+  body {
+    overflow-x: clip;
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -21,8 +27,10 @@
     }
   }
 
-  html {
-    scroll-behavior: smooth;
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 
   ::selection {
@@ -59,11 +67,31 @@
     font-family: var(--font-mono);
   }
 
-  /* Padrão de Grid Tecnológico para o Background */
-  .bg-grid-pattern {
-    /* background-image: linear-gradient(to right, #ffffff05 1px, transparent 1px),
-      linear-gradient(to bottom, #ffffff05 1px, transparent 1px);
-    background-size: 40px 40px; */
-    display: none;
+  /* Grao identico ao feTurbulence original, mas rasterizado UMA vez num tile
+     200x200 e repetido. baseFrequency 0.8 -> periodo 1.25px -> 160 periodos
+     exatos em 200px, entao stitchTiles nao reajusta nada. ~380 bytes, 0 request. */
+  .noise-overlay {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+  }
+
+  /* Spotlight dirigido por custom properties escritas via ref: o gradiente muda
+     sem passar pelo React. O `transition` do Tailwind nunca animou
+     background-image, entao animar so a opacity e equivalente ao original. */
+  .spotlight {
+    --spot-x: 50%;
+    --spot-y: 50%;
+    --spot-o: 0;
+  }
+
+  .spotlight__glow {
+    opacity: var(--spot-o);
+    transition: opacity 300ms ease;
+    background: radial-gradient(
+      600px circle at var(--spot-x) var(--spot-y),
+      rgba(6, 182, 212, 0.15),
+      transparent 40%
+    );
   }
 }

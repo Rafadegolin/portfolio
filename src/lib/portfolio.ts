@@ -103,21 +103,71 @@ function pickVisual(stack: string[]): ProjectVisual {
   const s = stack.map((t) => t.toLowerCase());
   if (
     s.some((t) =>
-      ["react native", "expo", "flutter", "swift", "kotlin", "android", "ios", "mobile"].includes(t),
+      [
+        "react native",
+        "expo",
+        "flutter",
+        "swift",
+        "kotlin",
+        "android",
+        "ios",
+        "mobile",
+      ].includes(t),
     )
   ) {
     return "mobile";
   }
   if (
     s.some((t) =>
-      ["n8n", "automation", "rpa", "langchain", "ai agent", "openai", "llm"].some((k) =>
-        t.includes(k),
-      ),
+      [
+        "n8n",
+        "automation",
+        "rpa",
+        "langchain",
+        "ai agent",
+        "openai",
+        "llm",
+      ].some((k) => t.includes(k)),
     )
   ) {
     return "automation";
   }
   return "backend";
+}
+
+/**
+ * Hosts declarados em `images.remotePatterns` (next.config.ts). Fora dessa lista
+ * o next/image renderiza com `unoptimized` — o mesmo que a <img> crua fazia antes,
+ * em vez de estourar em runtime.
+ */
+const OPTIMIZABLE_IMAGE_HOSTS = new Set([
+  "opengraph.githubassets.com",
+  "proposa-web.vercel.app",
+]);
+
+export function canOptimizeImage(src: string): boolean {
+  if (src.startsWith("/")) return true;
+  try {
+    return OPTIMIZABLE_IMAGE_HOSTS.has(new URL(src).hostname);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * O next/image lança se `src` não for caminho absoluto nem URL http(s) válida —
+ * a <img> crua só mostrava um ícone quebrado. Descarta o valor inválido para o
+ * card cair no visual do `visualType`.
+ */
+function sanitizeImage(src: string | null | undefined): string | undefined {
+  if (!src) return undefined;
+  if (src.startsWith("/")) return src;
+  try {
+    const u = new URL(src);
+    return u.protocol === "https:" || u.protocol === "http:" ? src : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /** Imagem social (OpenGraph) do repo público no GitHub — preview único por repo. */
@@ -150,10 +200,12 @@ function mapProject(p: ApiProject, i: number): Project {
   if (p.repoUrl) repos.push({ name: "Repositório", url: p.repoUrl });
   if (p.homepageUrl) repos.push({ name: "Demo", url: p.homepageUrl });
   const customLabel =
-    [p.role, p.year ? String(p.year) : null].filter(Boolean).join(" • ") || undefined;
+    [p.role, p.year ? String(p.year) : null].filter(Boolean).join(" • ") ||
+    undefined;
   // Imagem manual tem prioridade; senão, preview OG do repo público (único por repo).
   const ogImage = ghOgImage(p.repoUrl);
-  const image = p.imageUrl ?? ogImage;
+  const manualImage = sanitizeImage(p.imageUrl);
+  const image = manualImage ?? ogImage;
   return {
     title: p.name,
     desc: p.summary ?? "",
@@ -161,15 +213,23 @@ function mapProject(p: ApiProject, i: number): Project {
     gradient: GRADIENTS[i % GRADIENTS.length],
     visualType: pickVisual(p.stack ?? []),
     customLabel,
-    image: image ?? undefined,
-    imageContain: !p.imageUrl && Boolean(ogImage), // card OG → contain (não cortar)
+    image,
+    imageContain: !manualImage && Boolean(ogImage), // card OG → contain (não cortar)
     repos: repos.length ? repos : undefined,
-    stats: p.githubStars != null ? [{ value: `★ ${p.githubStars}`, label: "GitHub" }] : [],
+    stats:
+      p.githubStars != null
+        ? [{ value: `★ ${p.githubStars}`, label: "GitHub" }]
+        : [],
   };
 }
 
 function mapSkillGroup(g: ApiSkillGroup): Skill {
-  return { icon: Boxes, title: g.title, desc: g.description ?? "", tags: g.tags ?? [] };
+  return {
+    icon: Boxes,
+    title: g.title,
+    desc: g.description ?? "",
+    tags: g.tags ?? [],
+  };
 }
 
 /**
@@ -181,9 +241,13 @@ export async function loadPortfolio(): Promise<Partial<PortfolioData> | null> {
   try {
     // Mesma origem: a rota /api/portfolio busca o Proposa no servidor (sem CORS,
     // segue o redirect apex→www). A URL upstream fica em PORTFOLIO_API (server).
-    const res = await fetch("/api/portfolio", { headers: { Accept: "application/json" } });
+    const res = await fetch("/api/portfolio", {
+      headers: { Accept: "application/json" },
+    });
     if (!res.ok) {
-      console.warn(`[portfolio] /api/portfolio respondeu ${res.status} — usando conteúdo padrão.`);
+      console.warn(
+        `[portfolio] /api/portfolio respondeu ${res.status} — usando conteúdo padrão.`,
+      );
       return null;
     }
     const data = (await res.json()) as ApiPortfolio;
@@ -205,7 +269,10 @@ export async function loadPortfolio(): Promise<Partial<PortfolioData> | null> {
       skills: skills.length ? skills : undefined,
     };
   } catch (e) {
-    console.warn(`[portfolio] Falha ao buscar /api/portfolio — usando conteúdo padrão.`, e);
+    console.warn(
+      `[portfolio] Falha ao buscar /api/portfolio — usando conteúdo padrão.`,
+      e,
+    );
     return null;
   }
 }

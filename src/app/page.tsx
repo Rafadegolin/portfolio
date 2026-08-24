@@ -2,7 +2,10 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import {
-  motion,
+  LazyMotion,
+  MotionConfig,
+  domAnimation,
+  m,
   useScroll,
   useTransform,
   useSpring,
@@ -10,40 +13,27 @@ import {
   AnimatePresence,
   useVelocity,
   useAnimationFrame,
+  type MotionValue,
 } from "framer-motion";
 import {
   Github,
   Linkedin,
-  Mail,
-  ExternalLink,
-  ChevronDown,
-  Globe,
   Terminal,
-  Layers,
   Smartphone,
   Monitor,
-  Cpu,
-  Download,
-  Send,
-  MapPin,
   Server,
-  Code2,
   Zap,
-  MousePointer2,
   Workflow,
   Database,
   Bot,
-  Play,
-  FileJson,
   GitBranch,
-  ArrowUpRight,
-  CheckCircle2,
-  Boxes,
   Code,
   Menu,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import {
+  canOptimizeImage,
   loadPortfolio,
   type Experience,
   type PortfolioData,
@@ -247,27 +237,56 @@ const AutomationFlow = () => {
 
 // --- COMPONENTES GERAIS ---
 
-const IdeWindow = () => {
-  const [code, setCode] = useState("");
-  const fullCode = `const rafael = {
+const IDE_CODE = `const rafael = {
   role: "Full Stack Developer",
   graduate: "Computer Engineer",
   stack: ["React", "Node", "Python"],
   status: "Coding..."
 };`;
 
+const IdeWindow = () => {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const codeRef = useRef<HTMLSpanElement>(null);
+
   useEffect(() => {
-    let i = 0;
-    const interval = setInterval(() => {
-      setCode(fullCode.substring(0, i));
-      i++;
-      if (i > fullCode.length) clearInterval(interval);
-    }, 40);
-    return () => clearInterval(interval);
+    const host = hostRef.current;
+    const code = codeRef.current;
+    if (!host || !code) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      code.textContent = IDE_CODE;
+      return;
+    }
+
+    let raf = 0;
+    let t0 = 0;
+    const tick = (t: number) => {
+      if (!t0) t0 = t;
+      const i = Math.floor((t - t0) / 40);
+      code.textContent = IDE_CODE.slice(0, i); // escrita direta: 0 render React
+      if (i <= IDE_CODE.length) raf = requestAnimationFrame(tick);
+    };
+
+    // Antes eram ~6s de setState a 25/s comecando no mount, em cima da
+    // hidratacao/LCP. Agora so roda quando a secao entra em cena.
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      io.disconnect();
+      raf = requestAnimationFrame(tick);
+    });
+    io.observe(host);
+
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
   return (
-    <div className="w-full rounded-xl overflow-hidden bg-[#1E1E1E] border border-white/10 shadow-2xl font-mono text-xs md:text-sm">
+    <div
+      ref={hostRef}
+      className="w-full rounded-xl overflow-hidden bg-[#1E1E1E] border border-white/10 shadow-2xl font-mono text-xs md:text-sm"
+    >
       <div className="bg-[#252526] px-4 py-2 flex items-center gap-2 border-b border-black/50">
         <div className="flex gap-2">
           <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[#FF5F56]" />
@@ -281,7 +300,7 @@ const IdeWindow = () => {
       <div className="p-4 md:p-6 text-neutral-300">
         <pre>
           <code>
-            {code}
+            <span ref={codeRef} />
             <span className="animate-pulse">|</span>
           </code>
         </pre>
@@ -291,19 +310,13 @@ const IdeWindow = () => {
 };
 
 const NoiseOverlay = () => (
-  <div className="fixed inset-0 z-50 pointer-events-none opacity-[0.03] mix-blend-overlay">
-    <svg className="w-full h-full">
-      <filter id="noiseFilter">
-        <feTurbulence
-          type="fractalNoise"
-          baseFrequency="0.80"
-          numOctaves="3"
-          stitchTiles="stitch"
-        />
-      </filter>
-      <rect width="100%" height="100%" filter="url(#noiseFilter)" />
-    </svg>
-  </div>
+  // O grao vive num tile 200x200 rasterizado uma vez (ver .noise-overlay em
+  // globals.css). Antes era um feTurbulence aplicado a viewport inteira, refeito
+  // a cada frame de scroll.
+  <div
+    aria-hidden
+    className="noise-overlay fixed inset-0 z-50 pointer-events-none opacity-[0.03] mix-blend-overlay"
+  />
 );
 
 const CustomCursor = () => {
@@ -323,15 +336,14 @@ const CustomCursor = () => {
 
     const checkHover = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      // Optimization: Check hover only on element boundaries
-      setIsHovering(
-        !!(
-          target.tagName === "BUTTON" ||
-          target.tagName === "A" ||
-          target.closest("button") ||
-          target.closest("a")
-        ),
+      const next = !!(
+        target.tagName === "BUTTON" ||
+        target.tagName === "A" ||
+        target.closest("button") ||
+        target.closest("a")
       );
+      // Sem o guard, todo mouseover agenda um render.
+      setIsHovering((prev) => (prev === next ? prev : next));
     };
 
     window.addEventListener("mousemove", moveCursor, { passive: true });
@@ -343,15 +355,13 @@ const CustomCursor = () => {
   }, [mouseX, mouseY]);
 
   return (
-    <motion.div
-      className="fixed top-0 left-0 z-100 pointer-events-none hidden md:block mix-blend-difference rounded-full bg-white"
-      style={{
-        x: smoothX,
-        y: smoothY,
-        translateX: isHovering ? "-32px" : "-8px",
-        translateY: isHovering ? "-32px" : "-8px",
-      }}
-      animate={{ width: isHovering ? 64 : 16, height: isHovering ? 64 : 16 }}
+    // Caixa fixa de 16px centrada por margem negativa; o hover cresce via
+    // `scale` (composite) em vez de width/height (layout + paint por frame).
+    <m.div
+      aria-hidden
+      className="fixed top-0 left-0 z-100 pointer-events-none hidden md:block mix-blend-difference rounded-full bg-white w-4 h-4 -ml-2 -mt-2"
+      style={{ x: smoothX, y: smoothY }}
+      animate={{ scale: isHovering ? 4 : 1 }}
       transition={{ type: "spring", stiffness: 500, damping: 28 }}
     />
   );
@@ -359,88 +369,170 @@ const CustomCursor = () => {
 
 const TechBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    let animationFrameId: number;
-    let particles: Array<{
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const MAX_D = 120;
+    const MAX_D2 = MAX_D * MAX_D;
+    const FRAME_MS = 1000 / 30; // particulas andam 0.3px/frame: 30fps e indistinguivel
+    const BUCKETS = 4;
+
+    type Particle = {
       x: number;
       y: number;
       vx: number;
       vy: number;
       size: number;
-    }> = [];
+    };
+    let particles: Particle[] = [];
+    let raf = 0;
+    let running = false;
+    let last = 0;
+    let lastW = 0;
+    let lastH = 0;
+    let resizeTimer = 0;
+
+    const initParticles = () => {
+      const count = Math.min(Math.round(window.innerWidth * 0.05), 60);
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        size: Math.random() * 2,
+      }));
+    };
 
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      // A barra de endereco do mobile colapsa e dispara resize durante o scroll,
+      // mudando so a altura. Recriar bitmap + particulas ali causava jank.
+      if (w === lastW && Math.abs(h - lastH) < 200) return;
+      lastW = w;
+      lastH = h;
+      canvas.width = w;
+      canvas.height = h;
       initParticles();
     };
 
-    const initParticles = () => {
-      particles = [];
-      const particleCount = Math.min(window.innerWidth * 0.05, 60);
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          size: Math.random() * 2,
-        });
+    const onResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(resize, 150);
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "rgba(6, 182, 212, 0.5)";
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx = -p.vx;
+        if (p.y < 0 || p.y > canvas.height) p.vy = -p.vy;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Linhas agrupadas por faixa de alpha: 4 stroke() por frame em vez de ~200.
+      // Cada stroke() e uma tessellation + draw call separada.
+      const buckets: number[][] = [[], [], [], []];
+      for (let i = 0; i < particles.length; i++) {
+        const a = particles[i];
+        for (let j = i + 1; j < particles.length; j++) {
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const d2 = dx * dx + dy * dy; // sqrt so nos pares que realmente conectam
+          if (d2 >= MAX_D2) continue;
+          const t = 1 - Math.sqrt(d2) / MAX_D;
+          const k = Math.min(BUCKETS - 1, (t * BUCKETS) | 0);
+          buckets[k].push(a.x, a.y, b.x, b.y);
+        }
+      }
+      for (let k = 0; k < BUCKETS; k++) {
+        const seg = buckets[k];
+        if (!seg.length) continue;
+        ctx.strokeStyle = `rgba(6, 182, 212, ${(0.2 * (k + 0.5)) / BUCKETS})`;
+        ctx.beginPath();
+        for (let m = 0; m < seg.length; m += 4) {
+          ctx.moveTo(seg[m], seg[m + 1]);
+          ctx.lineTo(seg[m + 2], seg[m + 3]);
+        }
+        ctx.stroke();
       }
     };
 
-    const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((p, i) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(6, 182, 212, 0.5)";
-        ctx.fill();
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 120) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(6, 182, 212, ${
-              0.2 * (1 - distance / 120)
-            })`;
-            ctx.stroke();
-          }
-        }
-      });
-      animationFrameId = requestAnimationFrame(render);
+    const loop = (t: number) => {
+      raf = requestAnimationFrame(loop);
+      if (t - last < FRAME_MS) return;
+      last = t;
+      draw();
     };
-    window.addEventListener("resize", resize);
+
+    const start = () => {
+      if (running || document.hidden || reduced.matches) return;
+      running = true;
+      last = 0;
+      raf = requestAnimationFrame(loop);
+    };
+
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+
+    const onVisibility = () => (document.hidden ? stop() : start());
+    const onReducedChange = () => {
+      stop();
+      draw(); // deixa um frame estatico quando o usuario pede menos movimento
+      start();
+    };
+
     resize();
-    render();
+    draw();
+    start();
+
+    window.addEventListener("resize", onResize, { passive: true });
+    document.addEventListener("visibilitychange", onVisibility);
+    reduced.addEventListener("change", onReducedChange);
+
     return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animationFrameId);
+      stop();
+      window.clearTimeout(resizeTimer);
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibility);
+      reduced.removeEventListener("change", onReducedChange);
     };
   }, []);
-  return <canvas ref={canvasRef} className="fixed inset-0 z-0 opacity-60" />;
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden
+      className="fixed inset-0 z-0 opacity-60"
+    />
+  );
 };
 
 interface VelocityScrollProps {
   baseVelocity?: number;
+  scrollY: MotionValue<number>;
   children: React.ReactNode;
 }
 
-function VelocityScroll({ baseVelocity = 100, children }: VelocityScrollProps) {
+function VelocityScroll({
+  baseVelocity = 100,
+  scrollY,
+  children,
+}: VelocityScrollProps) {
   const baseX = useMotionValue(0);
-  const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(scrollVelocity, {
     damping: 50,
@@ -451,7 +543,38 @@ function VelocityScroll({ baseVelocity = 100, children }: VelocityScrollProps) {
   });
   const x = useTransform(baseX, (v) => `${wrap(-20, -45, v)}%`);
   const directionFactor = useRef(1);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const active = useRef(false);
+
+  // Sem isso o marquee roda para sempre — inclusive durante todo o scroll da
+  // secao de projetos, com o About tres telas acima.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let visible = false;
+    const sync = () => {
+      active.current = visible && !document.hidden && !reduced.matches;
+    };
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        sync();
+      },
+      { rootMargin: "150px 0px" },
+    );
+    io.observe(el);
+    document.addEventListener("visibilitychange", sync);
+    reduced.addEventListener("change", sync);
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+      reduced.removeEventListener("change", sync);
+    };
+  }, []);
+
   useAnimationFrame((t, delta) => {
+    if (!active.current) return;
     let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
     if (velocityFactor.get() < 0) directionFactor.current = -1;
     else if (velocityFactor.get() > 0) directionFactor.current = 1;
@@ -459,8 +582,11 @@ function VelocityScroll({ baseVelocity = 100, children }: VelocityScrollProps) {
     baseX.set(baseX.get() + moveBy);
   });
   return (
-    <div className="overflow-hidden m-0 whitespace-nowrap flex flex-nowrap select-none">
-      <motion.div
+    <div
+      ref={wrapRef}
+      className="overflow-hidden m-0 whitespace-nowrap flex flex-nowrap select-none"
+    >
+      <m.div
         className="font-black uppercase text-4xl md:text-9xl flex flex-nowrap gap-4 md:gap-8 text-neutral-800 tracking-tighter"
         style={{ x }}
       >
@@ -468,7 +594,7 @@ function VelocityScroll({ baseVelocity = 100, children }: VelocityScrollProps) {
         <span>{children} </span>
         <span>{children} </span>
         <span>{children} </span>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -500,7 +626,7 @@ const Badge = ({ children }: BadgeProps) => (
 
 interface StickyCardProps extends Project {
   i: number;
-  progress: any;
+  progress: MotionValue<number>;
   range: number[];
   targetScale: number;
 }
@@ -526,10 +652,15 @@ const StickyCard = ({
   const renderVisual = () => {
     if (image) {
       return (
-        <img
+        <Image
           src={image}
           alt={title}
-          className={`w-full h-full rounded-xl shadow-2xl ${
+          fill
+          // Card = max-w-5xl (1024px); metade direita = md:w-1/2 com p-8 -> 448px.
+          // Abaixo de md, coluna unica: largura do card menos p-6.
+          sizes="(min-width: 1080px) 448px, (min-width: 768px) calc(50vw - 88px), calc(100vw - 80px)"
+          unoptimized={!canOptimizeImage(image)}
+          className={`rounded-xl shadow-2xl ${
             imageContain ? "object-contain" : "object-cover object-top"
           }`}
         />
@@ -553,12 +684,19 @@ const StickyCard = ({
   };
 
   return (
-    <div className="min-h-screen md:h-screen sticky top-0 flex items-center justify-center mb-0 px-0 md:px-0 py-4 md:py-0">
-      <motion.div
-        style={{ scale, top: `calc(-5vh + ${i * 25}px)` }}
-        className={`relative flex flex-col-reverse md:flex-row w-full max-w-5xl min-h-[500px] md:h-[500px] rounded-3xl border border-white/10 bg-neutral-900 overflow-hidden origin-top shadow-2xl`}
+    <div
+      className="min-h-screen md:h-screen sticky top-0 flex items-center justify-center py-4 md:py-0"
+      // Offset da pilha vive no wrapper estatico. Mantem o `style` do motion com
+      // apenas `scale`, para o framer-motion escrever so `transform` por frame.
+      style={
+        { "--card-offset": `calc(-5vh + ${i * 25}px)` } as React.CSSProperties
+      }
+    >
+      <m.div
+        style={{ scale }}
+        className="relative top-[var(--card-offset)] flex flex-col-reverse md:flex-row w-full max-w-5xl min-h-[500px] md:h-[500px] rounded-3xl border border-white/10 bg-neutral-900 overflow-hidden origin-top shadow-2xl md:will-change-transform"
       >
-        <div className="relative w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-between z-10 bg-neutral-900/50 backdrop-blur-sm border-t md:border-t-0 md:border-r border-white/5">
+        <div className="relative w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-between z-10 bg-neutral-900 border-t md:border-t-0 md:border-r border-white/5">
           <div>
             <div className="flex items-center gap-3 mb-4">
               {visualType === "mobile" && (
@@ -634,7 +772,7 @@ const StickyCard = ({
             {renderVisual()}
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 };
@@ -646,74 +784,90 @@ const SpotlightCard = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  const divRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [opacity, setOpacity] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const rafId = useRef(0);
+  const rect = useRef<DOMRect | null>(null);
+  const next = useRef({ x: 0, y: 0 });
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!divRef.current) return;
-    const div = divRef.current;
-    const rect = div.getBoundingClientRect();
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  const flush = () => {
+    rafId.current = 0;
+    const el = ref.current;
+    if (!el) return;
+    el.style.setProperty("--spot-x", `${next.current.x}px`);
+    el.style.setProperty("--spot-y", `${next.current.y}px`);
   };
 
-  const handleFocus = () => {
-    setOpacity(1);
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const r = rect.current;
+    if (!r) return;
+    next.current.x = e.clientX - r.left;
+    next.current.y = e.clientY - r.top;
+    // Coalesce em uma escrita por frame, sem passar pelo React.
+    if (!rafId.current) rafId.current = requestAnimationFrame(flush);
   };
 
-  const handleBlur = () => {
-    setOpacity(0);
+  const onEnter = () => {
+    const el = ref.current;
+    if (!el) return;
+    rect.current = el.getBoundingClientRect(); // 1 leitura por entrada, nao por pixel
+    el.style.setProperty("--spot-o", "1");
   };
 
-  const handleMouseEnter = () => {
-    setOpacity(1);
+  const onLeave = () => {
+    ref.current?.style.setProperty("--spot-o", "0");
+    rect.current = null;
   };
 
-  const handleMouseLeave = () => {
-    setOpacity(0);
-  };
+  useEffect(() => {
+    // O card se move sob o cursor durante o scroll, invalidando o rect cacheado.
+    const invalidate = () => {
+      if (rect.current && ref.current)
+        rect.current = ref.current.getBoundingClientRect();
+    };
+    window.addEventListener("scroll", invalidate, { passive: true });
+    window.addEventListener("resize", invalidate, { passive: true });
+    return () => {
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+      window.removeEventListener("scroll", invalidate);
+      window.removeEventListener("resize", invalidate);
+    };
+  }, []);
 
   return (
     <div
-      ref={divRef}
-      onMouseMove={handleMouseMove}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={`relative overflow-hidden rounded-xl border border-white/10 bg-neutral-900/50 p-8 ${className}`}
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      onFocus={onEnter}
+      onBlur={onLeave}
+      className={`spotlight relative overflow-hidden rounded-xl border border-white/10 bg-neutral-900/50 p-8 ${className}`}
     >
-      <div
-        className="pointer-events-none absolute -inset-px transition duration-300"
-        style={{
-          opacity,
-          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(6, 182, 212, 0.15), transparent 40%)`,
-        }}
-      />
+      <div className="spotlight__glow pointer-events-none absolute -inset-px" />
       <div className="relative z-10">{children}</div>
     </div>
   );
 };
 
-const Hero = () => {
-  const { scrollY } = useScroll();
+const Hero = ({ scrollY }: { scrollY: MotionValue<number> }) => {
   const y1 = useTransform(scrollY, [0, 500], [0, 50]);
   const y2 = useTransform(scrollY, [0, 500], [0, -100]);
+  const scrollHintOpacity = useTransform(scrollY, [0, 200], [1, 0]);
 
   return (
     <section className="relative min-h-screen w-full flex flex-col justify-center items-center overflow-hidden py-20 px-4">
       <div className="z-10 text-center w-full max-w-7xl">
-        <motion.div
+        <m.div
           style={{ y: y2 }}
           className="flex flex-col items-center gap-4 md:gap-6"
         >
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
             <Badge>Full Stack Developer</Badge>
-          </motion.div>
+          </m.div>
 
           <h1 className="text-6xl sm:text-7xl md:text-[8rem] font-extrabold tracking-tighter leading-[0.9] text-white mix-blend-lighten">
             RAFAEL <br />
@@ -730,9 +884,9 @@ const Hero = () => {
             Criando ecossistemas digitais completos potencializados por{" "}
             <span className="text-cyan-400 font-medium">automação</span>.
           </p>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           style={{ y: y1 }}
           className="mt-8 md:mt-12 flex flex-col sm:flex-row gap-4 justify-center pb-10 w-full max-w-md mx-auto sm:max-w-none"
         >
@@ -749,30 +903,30 @@ const Hero = () => {
           >
             LinkedIn
           </a>
-        </motion.div>
+        </m.div>
       </div>
 
-      <motion.div
-        style={{ opacity: useTransform(scrollY, [0, 200], [1, 0]) }}
+      <m.div
+        style={{ opacity: scrollHintOpacity }}
         className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 text-white/30 flex flex-col items-center gap-2"
       >
         <span className="text-[8px] md:text-[10px] uppercase tracking-[0.3em]">
           Scroll
         </span>
         <div className="h-8 md:h-12 w-px bg-linear-to-b from-cyan-500 to-transparent" />
-      </motion.div>
+      </m.div>
     </section>
   );
 };
 
-const About = () => {
+const About = ({ scrollY }: { scrollY: MotionValue<number> }) => {
   return (
     <section id="sobre" className="py-10 md:py-32 relative">
       <div className="mb-10 md:mb-20">
-        <VelocityScroll baseVelocity={-1}>
+        <VelocityScroll baseVelocity={-1} scrollY={scrollY}>
           FULL STACK DEVELOPER • REACT • NODE.JS • PYTHON •
         </VelocityScroll>
-        <VelocityScroll baseVelocity={1}>
+        <VelocityScroll baseVelocity={1} scrollY={scrollY}>
           AUTOMATION • N8N • AI AGENTS • ARCHITECTURE •
         </VelocityScroll>
       </div>
@@ -883,8 +1037,8 @@ const Career = ({ override }: { override?: Experience[] }) => {
           <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-cyan-500/0 via-cyan-500/20 to-cyan-500/0 hidden md:block" />
 
           {experiences.map((exp, i) => (
-            <motion.div
-              key={i}
+            <m.div
+              key={`${exp.company}-${exp.period}`}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
@@ -946,7 +1100,7 @@ const Career = ({ override }: { override?: Experience[] }) => {
               </div>
               <div className="hidden md:block w-1/2" />{" "}
               {/* Espaço vazio para manter o grid */}
-            </motion.div>
+            </m.div>
           ))}
         </div>
       </div>
@@ -1054,14 +1208,17 @@ const Projects = ({ override }: { override?: Project[] }) => {
           Alguns Projetos
         </h2>
         {projects.map((project, i) => {
-          const targetScale = 1 - (projects.length - i) * 0.05;
+          // `last` = quantos cards ainda pousam por cima deste. O passo deriva do
+          // total, senao a API devolvendo != 5 projetos gera range decrescente.
+          const last = Math.max(1, projects.length - 1);
+          const targetScale = Math.max(0.6, 1 - (last - i) * 0.05);
           return (
             <StickyCard
-              key={i}
+              key={project.title}
               i={i}
               {...project}
               progress={scrollYProgress}
-              range={[i * 0.25, 1]}
+              range={[i / last, 1]}
               targetScale={targetScale}
             />
           );
@@ -1131,7 +1288,7 @@ const Skills = ({ override }: { override?: Skill[] }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4">
           {skills.map((skill, i) => (
-            <SpotlightCard key={i} className="h-full">
+            <SpotlightCard key={skill.title} className="h-full">
               <div className="flex flex-col h-full">
                 <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center mb-6 text-cyan-400 border border-white/10">
                   <skill.icon size={24} />
@@ -1196,9 +1353,14 @@ const Contact = () => (
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Um unico useScroll global: cada instancia re-mede o DOM a cada evento de
+  // scroll, para todos os handlers registrados no mesmo container.
+  const { scrollY } = useScroll();
   // Conteúdo gerenciado no Proposa (API pública). Sem API/erro → mantém o
   // conteúdo padrão embutido nas seções.
-  const [portfolio, setPortfolio] = useState<Partial<PortfolioData> | null>(null);
+  const [portfolio, setPortfolio] = useState<Partial<PortfolioData> | null>(
+    null,
+  );
 
   useEffect(() => {
     let active = true;
@@ -1221,114 +1383,115 @@ export default function Home() {
   };
 
   return (
-    <>
-      <NoiseOverlay />
-      <CustomCursor />
-      <div className="bg-neutral-950 text-white selection:bg-cyan-500/30 selection:text-white relative">
-        <div className="fixed inset-0 bg-grid-pattern pointer-events-none z-0" />
-        <TechBackground />
+    <LazyMotion features={domAnimation} strict>
+      <MotionConfig reducedMotion="user">
+        <NoiseOverlay />
+        <CustomCursor />
+        <div className="bg-neutral-950 text-white selection:bg-cyan-500/30 selection:text-white relative">
+          <TechBackground />
 
-        {/* Navbar Responsiva */}
-        <nav className="fixed top-0 w-full z-40 px-4 md:px-6 py-4 md:py-6 flex justify-between items-center mix-blend-difference backdrop-blur-sm md:backdrop-blur-none">
-          <span className="font-bold tracking-tighter text-lg md:text-xl flex items-center gap-1">
-            <GitBranch size={18} /> RD.
-          </span>
+          {/* Navbar Responsiva */}
+          <nav className="fixed top-0 w-full z-40 px-4 md:px-6 py-4 md:py-6 flex justify-between items-center mix-blend-difference">
+            <span className="font-bold tracking-tighter text-lg md:text-xl flex items-center gap-1">
+              <GitBranch size={18} /> RD.
+            </span>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex gap-8 text-sm font-medium">
-            <a
-              href="#sobre"
-              onClick={handleScroll}
-              className="hover:text-cyan-400 transition-colors cursor-pointer"
-            >
-              SOBRE
-            </a>
-            <a
-              href="#career"
-              onClick={handleScroll}
-              className="hover:text-cyan-400 transition-colors cursor-pointer"
-            >
-              TRAJETÓRIA
-            </a>
-            <a
-              href="#projetos"
-              onClick={handleScroll}
-              className="hover:text-cyan-400 transition-colors cursor-pointer"
-            >
-              SOLUÇÕES
-            </a>
-            <a
-              href="#contato"
-              onClick={handleScroll}
-              className="hover:text-cyan-400 transition-colors cursor-pointer"
-            >
-              CONTATO
-            </a>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-white"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X /> : <Menu />}
-          </button>
-        </nav>
-
-        {/* Mobile Menu Overlay */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="fixed inset-0 z-30 bg-black/95 flex flex-col items-center justify-center gap-8 text-xl font-bold md:hidden"
-            >
+            {/* Desktop Menu */}
+            <div className="hidden md:flex gap-8 text-sm font-medium">
               <a
                 href="#sobre"
                 onClick={handleScroll}
-                className="text-white hover:text-cyan-400"
+                className="hover:text-cyan-400 transition-colors cursor-pointer"
               >
                 SOBRE
               </a>
               <a
                 href="#career"
                 onClick={handleScroll}
-                className="text-white hover:text-cyan-400"
+                className="hover:text-cyan-400 transition-colors cursor-pointer"
               >
                 TRAJETÓRIA
               </a>
               <a
                 href="#projetos"
                 onClick={handleScroll}
-                className="text-white hover:text-cyan-400"
+                className="hover:text-cyan-400 transition-colors cursor-pointer"
               >
                 SOLUÇÕES
               </a>
               <a
                 href="#contato"
                 onClick={handleScroll}
-                className="text-white hover:text-cyan-400"
+                className="hover:text-cyan-400 transition-colors cursor-pointer"
               >
                 CONTATO
               </a>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
 
-        <main>
-          <Hero />
-          <About />
-          <Skills override={portfolio?.skills} />
-          <Career override={portfolio?.experiences} />
-          <Projects override={portfolio?.projects} />
-          <Contact />
-        </main>
-        <footer className="py-6 text-center text-neutral-600 text-[10px] md:text-xs uppercase tracking-widest border-t border-white/5 bg-neutral-950">
-          © {new Date().getFullYear()} Rafael Degolin da Silva. Full Stack
-          Engineering.
-        </footer>
-      </div>
-    </>
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden text-white"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X /> : <Menu />}
+            </button>
+          </nav>
+
+          {/* Mobile Menu Overlay */}
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <m.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="fixed inset-0 z-30 bg-black/95 flex flex-col items-center justify-center gap-8 text-xl font-bold md:hidden"
+              >
+                <a
+                  href="#sobre"
+                  onClick={handleScroll}
+                  className="text-white hover:text-cyan-400"
+                >
+                  SOBRE
+                </a>
+                <a
+                  href="#career"
+                  onClick={handleScroll}
+                  className="text-white hover:text-cyan-400"
+                >
+                  TRAJETÓRIA
+                </a>
+                <a
+                  href="#projetos"
+                  onClick={handleScroll}
+                  className="text-white hover:text-cyan-400"
+                >
+                  SOLUÇÕES
+                </a>
+                <a
+                  href="#contato"
+                  onClick={handleScroll}
+                  className="text-white hover:text-cyan-400"
+                >
+                  CONTATO
+                </a>
+              </m.div>
+            )}
+          </AnimatePresence>
+
+          <main>
+            <Hero scrollY={scrollY} />
+            <About scrollY={scrollY} />
+            <Skills override={portfolio?.skills} />
+            <Career override={portfolio?.experiences} />
+            <Projects override={portfolio?.projects} />
+            <Contact />
+          </main>
+          <footer className="py-6 text-center text-neutral-600 text-[10px] md:text-xs uppercase tracking-widest border-t border-white/5 bg-neutral-950">
+            © {new Date().getFullYear()} Rafael Degolin da Silva. Full Stack
+            Engineering.
+          </footer>
+        </div>
+      </MotionConfig>
+    </LazyMotion>
   );
 }
