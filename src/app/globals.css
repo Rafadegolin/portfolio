@@ -158,12 +158,6 @@
   }
 }
 
-@keyframes ticker {
-  to {
-    transform: translateY(-100%);
-  }
-}
-
 @keyframes caret {
   50% {
     opacity: 0;
@@ -195,10 +189,6 @@
     animation: caret 1s steps(1) infinite;
   }
 
-  .ticker {
-    animation: ticker calc(var(--n, 1) * 3.2s) steps(var(--n, 1)) infinite;
-  }
-
   .spin-slow {
     animation: orbit 60s linear infinite;
     transform-box: fill-box;
@@ -216,7 +206,6 @@
   [data-paused] .led-live,
   [data-paused] .caret,
   [data-paused] .spin-slow,
-  [data-paused] .ticker,
   [data-paused].led-live {
     animation-play-state: paused;
   }

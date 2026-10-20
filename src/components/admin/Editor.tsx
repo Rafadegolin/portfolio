@@ -732,29 +732,6 @@ function SkillsTab({ content, update }: TabProps) {
 function DailyTab({ content, update }: TabProps) {
   return (
     <>
-      <Fieldset title="Entregas recentes">
-        <ArrayField
-          label="Log (mostra as 6 mais recentes)"
-          items={content.workLog}
-          onChange={(v) => update((d) => void (d.workLog = v))}
-          create={() => ({ date: new Date().toISOString().slice(0, 10), title: empty(), description: empty(), tags: [] })}
-          title={(e) => `${e.date} · ${e.title.pt}`}
-          render={(e, set) => (
-            <>
-              <TextField label="Data" hint="AAAA-MM-DD" value={e.date} onChange={(v) => set((x) => void (x.date = v))} />
-              <LocalizedField label="O que entreguei" value={e.title} onChange={(v) => set((x) => void (x.title = v))} />
-              <LocalizedField
-                label="Contexto e resultado"
-                multiline
-                optional
-                value={e.description}
-                onChange={(v) => set((x) => void (x.description = v))}
-              />
-              <TagsField label="Tags" value={e.tags} onChange={(v) => set((x) => void (x.tags = v))} />
-            </>
-          )}
-        />
-      </Fieldset>
       <Fieldset title="Uma semana típica">
         <LocalizedListField label="Passos" items={content.routine} onChange={(v) => update((d) => void (d.routine = v))} />
       </Fieldset>

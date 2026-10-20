@@ -8,7 +8,6 @@ import { MobileMenu } from "./MobileMenu";
 export const SECTION_IDS = {
   activity: "activity",
   systems: "systems",
-  log: "log",
   stack: "stack",
   career: "career",
   runbook: "runbook",
@@ -25,7 +24,6 @@ export function Nav({ locale, altHref }: { locale: Locale; altHref: string }) {
   const items = (
     [
       ["systems", d.nav.systems],
-      ["log", d.nav.log],
       ["stack", d.nav.stack],
       ["career", d.nav.career],
       ["contact", d.nav.contact],

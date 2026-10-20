@@ -5,7 +5,6 @@ const dictionary = {
   pt: {
     nav: {
       systems: "Sistemas",
-      log: "Log",
       stack: "Stack",
       career: "Trajetória",
       contact: "Contato",
@@ -26,7 +25,6 @@ const dictionary = {
       mapLabel: "Mapa dos sistemas que construí",
       mapTitle: "Live · mapa de sistemas",
       mapMeta: (prod: number, side: number) => `${prod} prod · ${side} side`,
-      events: "último evento",
     },
     github: {
       title: "Atividade",
@@ -51,12 +49,6 @@ const dictionary = {
       status: { production: "PROD", side: "SIDE", archived: "ARQUIVADO" } satisfies Record<ProjectStatus, string>,
       lab: "Lab",
       labIntro: "Experimentos e projetos por diversão — onde testo stacks e ideias fora da zona de conforto.",
-    },
-    log: {
-      title: "Deploy log",
-      meta: "entregas + commits recentes",
-      shipped: "entregue",
-      commit: "commit",
     },
     stack: {
       title: "Stack",
@@ -126,7 +118,6 @@ const dictionary = {
   en: {
     nav: {
       systems: "Systems",
-      log: "Log",
       stack: "Stack",
       career: "Career",
       contact: "Contact",
@@ -147,7 +138,6 @@ const dictionary = {
       mapLabel: "Map of the systems I built",
       mapTitle: "Live · system map",
       mapMeta: (prod: number, side: number) => `${prod} prod · ${side} side`,
-      events: "latest event",
     },
     github: {
       title: "Activity",
@@ -172,12 +162,6 @@ const dictionary = {
       status: { production: "PROD", side: "SIDE", archived: "ARCHIVED" } satisfies Record<ProjectStatus, string>,
       lab: "Lab",
       labIntro: "Experiments and just-for-fun builds — where I try stacks and ideas outside my comfort zone.",
-    },
-    log: {
-      title: "Deploy log",
-      meta: "shipped work + recent commits",
-      shipped: "shipped",
-      commit: "commit",
     },
     stack: {
       title: "Stack",
@@ -258,14 +242,6 @@ export function formatMonth(value: string, locale: Locale): string {
   const m = Number(month);
   if (!year || !m) return value;
   return `${dictionary[locale].months[m - 1]} ${year}`;
-}
-
-/** "2026-10-14" → "14 Out" */
-export function formatDay(value: string, locale: Locale): string {
-  const [, month, day] = value.slice(0, 10).split("-");
-  const m = Number(month);
-  if (!m) return value;
-  return day ? `${day} ${dictionary[locale].months[m - 1]}` : dictionary[locale].months[m - 1];
 }
 
 export function homePath(locale: Locale): string {

@@ -1,18 +1,10 @@
-// Dados reais do GitHub para a home (heatmap, números e commits recentes).
+// Dados reais do GitHub para a home (heatmap e números).
 // Buscados no servidor com revalidate: o HTML continua estático e se atualiza
 // sozinho a cada 6h. Qualquer falha devolve null e os painéis somem.
 
 const REVALIDATE = 60 * 60 * 6;
 
 export type ContributionDay = { date: string; count: number };
-
-export type RecentCommit = {
-  repo: string;
-  url: string;
-  message: string;
-  date: string;
-  language: string | null;
-};
 
 export type GithubStats = {
   login: string;
@@ -21,9 +13,7 @@ export type GithubStats = {
   activeDays: number;
   currentStreak: number;
   longestStreak: number;
-  publicRepos: number;
   weeks: ContributionDay[][];
-  recent: RecentCommit[];
 };
 
 type GraphQLResponse = {
@@ -36,18 +26,6 @@ type GraphQLResponse = {
           weeks: { contributionDays: { date: string; contributionCount: number }[] }[];
         };
       };
-      repositories: {
-        totalCount: number;
-        nodes: {
-          name: string;
-          url: string;
-          isFork: boolean;
-          primaryLanguage: { name: string } | null;
-          defaultBranchRef: {
-            target: { history?: { nodes: { messageHeadline: string; committedDate: string }[] } };
-          } | null;
-        }[];
-      };
     } | null;
   };
 };
@@ -59,16 +37,6 @@ const QUERY = `query($login: String!) {
       contributionCalendar {
         totalContributions
         weeks { contributionDays { date contributionCount } }
-      }
-    }
-    repositories(first: 12, privacy: PUBLIC, ownerAffiliations: OWNER, orderBy: { field: PUSHED_AT, direction: DESC }) {
-      totalCount
-      nodes {
-        name
-        url
-        isFork
-        primaryLanguage { name }
-        defaultBranchRef { target { ... on Commit { history(first: 1) { nodes { messageHeadline committedDate } } } } }
       }
     }
   }
@@ -118,25 +86,6 @@ export async function getGithubStats(profileUrl: string): Promise<GithubStats | 
     const days = weeks.flat();
     const { current, longest } = streaks(days);
 
-    const recent = user.repositories.nodes
-      .filter((r) => !r.isFork && r.name.toLowerCase() !== login.toLowerCase())
-      .flatMap((r) => {
-        const commit = r.defaultBranchRef?.target.history?.nodes[0];
-        return commit
-          ? [
-              {
-                repo: r.name,
-                url: r.url,
-                message: commit.messageHeadline,
-                date: commit.committedDate,
-                language: r.primaryLanguage?.name ?? null,
-              },
-            ]
-          : [];
-      })
-      .sort((a, b) => b.date.localeCompare(a.date))
-      .slice(0, 6);
-
     return {
       login,
       total: calendar.totalContributions,
@@ -144,9 +93,7 @@ export async function getGithubStats(profileUrl: string): Promise<GithubStats | 
       activeDays: days.filter((d) => d.count > 0).length,
       currentStreak: current,
       longestStreak: longest,
-      publicRepos: user.repositories.totalCount,
       weeks,
-      recent,
     };
   } catch {
     return null;

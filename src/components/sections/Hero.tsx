@@ -2,11 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowDown, Download } from "lucide-react";
 import { getContent, isPending, t, visibleMetrics, type Locale } from "@/content";
-import { formatDay, getDictionary, tldrPath } from "@/content/dictionary";
+import { getDictionary, tldrPath } from "@/content/dictionary";
 import type { GithubStats } from "@/lib/github";
 import { CopyEmail } from "@/components/ui/CopyEmail";
 import { Container, Led, PanelHeader, Readout, buttonPrimary, buttonSecondary } from "@/components/ui/primitives";
-import { recentEvents } from "@/components/sections/DeployLog";
 import { SystemMap } from "@/components/diagram/SystemMap";
 import { SECTION_IDS } from "@/components/layout/Nav";
 
@@ -15,7 +14,6 @@ const nf = (locale: Locale) => new Intl.NumberFormat(locale === "pt" ? "pt-BR" :
 export function Hero({ locale, github }: { locale: Locale; github: GithubStats | null }) {
   const d = getDictionary(locale);
   const { profile, projects } = getContent();
-  const events = recentEvents(locale, github, 6);
   const availability = t(profile.availability, locale);
   const location = t(profile.location, locale);
   const cv = isPending(profile.cv[locale]) ? "" : profile.cv[locale];
@@ -120,26 +118,6 @@ export function Hero({ locale, github }: { locale: Locale; github: GithubStats |
             <div className="p-2 sm:p-3">
               <SystemMap locale={locale} />
             </div>
-            {events.length > 0 && (
-              // Ticker de eventos reais: troca de linha a cada ~3s, só CSS.
-              <div className="flex items-center gap-3 border-t border-line px-4 py-2.5 font-mono text-[11px]" data-motion>
-                <span className="shrink-0 uppercase tracking-[0.14em] text-subtle">{d.hero.events}</span>
-                <div className="h-4 min-w-0 flex-1 overflow-hidden">
-                  <ul className="ticker" style={{ "--n": events.length } as React.CSSProperties}>
-                    {events.map((e, i) => (
-                      <li key={i} className="flex h-4 items-center gap-2 truncate leading-4">
-                        <span className={e.kind === "shipped" ? "text-accent" : "text-flow"}>
-                          {e.kind === "shipped" ? "✓" : "●"}
-                        </span>
-                        <span className="tabular text-subtle">{formatDay(e.date, locale)}</span>
-                        {e.kind === "commit" && <span className="text-muted">{e.repo}</span>}
-                        <span className="truncate text-fg">{e.title}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
