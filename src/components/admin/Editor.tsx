@@ -4,6 +4,7 @@ import { ExternalLink, FileUp, ImagePlus, LogOut, Save } from "lucide-react";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import {
   NODE_KINDS,
+  PROJECT_KINDS,
   PROJECT_STATUS,
   contentSchema,
   type Content,
@@ -403,6 +404,12 @@ function newProject(): Project {
     featured: false,
     confidential: false,
     status: "side",
+    kind: "case",
+    context: empty(),
+    highlights: [],
+    decisions: [],
+    timeline: [],
+    cover: "",
     architecture: { nodes: [], edges: [] },
   };
 }
@@ -437,12 +444,50 @@ function ProjectsTab({
             options={PROJECT_STATUS.map((v) => ({ value: v, label: STATUS_LABEL[v] }))}
             onChange={(v) => set((x) => void (x.status = v))}
           />
+          <SelectField
+            label="Tipo"
+            value={p.kind}
+            options={PROJECT_KINDS.map((v) => ({ value: v, label: KIND_PROJECT_LABEL[v] }))}
+            onChange={(v) => set((x) => void (x.kind = v))}
+          />
           <LocalizedField label="Categoria" value={p.category} onChange={(v) => set((x) => void (x.category = v))} />
+          <LocalizedField
+            label="Contexto"
+            value={p.context}
+            onChange={(v) => set((x) => void (x.context = v))}
+          />
           <LocalizedField label="Resumo (1 frase)" multiline value={p.tagline} onChange={(v) => set((x) => void (x.tagline = v))} />
           <LocalizedField label="O problema" multiline value={p.problem} onChange={(v) => set((x) => void (x.problem = v))} />
           <LocalizedField label="O que construí" multiline value={p.solution} onChange={(v) => set((x) => void (x.solution = v))} />
           <LocalizedField label="Meu papel" multiline value={p.role} onChange={(v) => set((x) => void (x.role = v))} />
+          <LocalizedListField label="Decisões e trade-offs" items={p.decisions} onChange={(v) => set((x) => void (x.decisions = v))} />
           <LocalizedListField label="Resultados" items={p.results} onChange={(v) => set((x) => void (x.results = v))} />
+          <ArrayField
+            label="Destaques técnicos"
+            items={p.highlights}
+            onChange={(v) => set((x) => void (x.highlights = v))}
+            create={() => ({ title: empty(), description: empty() })}
+            title={(h) => h.title.pt || "(sem título)"}
+            render={(h, setH) => (
+              <>
+                <LocalizedField label="Título" value={h.title} onChange={(v) => setH((x) => void (x.title = v))} />
+                <LocalizedField label="Descrição" multiline value={h.description} onChange={(v) => setH((x) => void (x.description = v))} />
+              </>
+            )}
+          />
+          <ArrayField
+            label="Linha do tempo"
+            items={p.timeline}
+            onChange={(v) => set((x) => void (x.timeline = v))}
+            create={() => ({ date: "", label: empty() })}
+            title={(m) => `${m.date} ${m.label.pt}`}
+            render={(m, setM) => (
+              <>
+                <TextField label="Data" hint="AAAA-MM" value={m.date} onChange={(v) => setM((x) => void (x.date = v))} />
+                <LocalizedField label="Marco" value={m.label} onChange={(v) => setM((x) => void (x.label = v))} />
+              </>
+            )}
+          />
           <ArrayField
             label="Métricas"
             items={p.metrics}
@@ -475,7 +520,7 @@ function ProjectsTab({
             label="Imagens (a primeira é a capa)"
             items={p.images}
             onChange={(v) => set((x) => void (x.images = v))}
-            create={() => ({ src: "", alt: empty() })}
+            create={() => ({ src: "", alt: empty(), caption: empty() })}
             title={(img) => img.src.split("/").pop() || "(sem arquivo)"}
             render={(img, setImg) => (
               <>
@@ -505,8 +550,20 @@ function ProjectsTab({
                   </label>
                 </div>
                 <LocalizedField label="Texto alternativo" value={img.alt} onChange={(v) => setImg((x) => void (x.alt = v))} />
+                <LocalizedField
+                  label="Legenda"
+                  value={img.caption ?? empty()}
+                  onChange={(v) => setImg((x) => void (x.caption = v))}
+                />
               </>
             )}
+          />
+          <TextField
+            label="Capa do card na home"
+            hint="caminho de uma das imagens acima; vazio = sem capa"
+            optional
+            value={p.cover}
+            onChange={(v) => set((x) => void (x.cover = v))}
           />
         </>
       )}
@@ -518,6 +575,11 @@ const STATUS_LABEL: Record<Project["status"], string> = {
   production: "Em produção (LED verde)",
   side: "Projeto pessoal / paralelo (LED âmbar)",
   archived: "Arquivado",
+};
+
+const KIND_PROJECT_LABEL: Record<Project["kind"], string> = {
+  case: "Case (seção Sistemas)",
+  lab: "Lab / experimento",
 };
 
 const KIND_LABEL: Record<(typeof NODE_KINDS)[number], string> = {

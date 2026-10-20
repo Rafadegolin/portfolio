@@ -89,49 +89,91 @@
       "slug": "pronix-hub",
       "title": "Pronix Hub",
       "category": {
-        "pt": "ERP interno · Full Stack",
-        "en": "Internal ERP · Full Stack"
+        "pt": "ERP + app do cliente · Centro do ecossistema",
+        "en": "ERP + customer app · Ecosystem hub"
       },
       "year": "2025",
+      "kind": "case",
+      "context": {
+        "pt": "Idealizado por mim · VDV Group / Pronix Tech · mentoria para sellers do Mercado Livre · out/2025 → hoje · hoje com um time de 4 devs",
+        "en": "Conceived by me · VDV Group / Pronix Tech · mentoring for Mercado Livre sellers · Oct 2025 → now · now with a 4-dev team"
+      },
       "tagline": {
-        "pt": "O sistema onde a Pronix opera: CRM, financeiro, contratos e métricas do Mercado Livre em um só lugar.",
-        "en": "The system Pronix runs on: CRM, finance, contracts and Mercado Livre metrics in one place."
+        "pt": "O centro do ecossistema Pronix: o ERP da empresa e o app de ~950 mentorados, ligados a 20+ sistemas — do checkout ao Mercado Livre.",
+        "en": "The core of the Pronix ecosystem: the company's ERP and the app for ~950 mentees, wired to 20+ systems — from checkout to Mercado Livre."
       },
       "problem": {
-        "pt": "A operação vivia espalhada em planilhas, ERP de terceiros e conversas de WhatsApp. Ninguém tinha a visão completa do cliente, e cada relatório era montado à mão.",
-        "en": "Operations were scattered across spreadsheets, a third-party ERP and WhatsApp threads. Nobody had the full picture of a customer, and every report was assembled by hand."
+        "pt": "Carteira de clientes, jornada, retenção, comissões, financeiro, agenda e NPS viviam em planilhas e ferramentas que não conversavam: venda no checkout, financeiro no Conta Azul, funil no RD Station, agenda no Google, operação da loja no Mercado Livre. Ninguém tinha a visão completa do cliente, cada relatório era montado à mão — e o mentorado não tinha onde operar a própria loja com o apoio da mentoria.",
+        "en": "Customer portfolio, journey, retention, commissions, finance, scheduling and NPS lived in spreadsheets and tools that didn't talk to each other: sales in the checkout, finance in Conta Azul, funnel in RD Station, calendars in Google, store operations in Mercado Livre. Nobody had the full picture of a customer, every report was built by hand — and mentees had nowhere to run their own store with the mentoring team's support."
       },
       "solution": {
-        "pt": "Desenhei e construí uma plataforma full stack (Next.js + NestJS + PostgreSQL) que centraliza CRM, financeiro e jornada do cliente, com um dashboard de métricas alimentado pela API do Mercado Livre e contratos gerados automaticamente.",
-        "en": "I designed and built a full stack platform (Next.js + NestJS + PostgreSQL) that centralizes CRM, finance and the customer journey, with a metrics dashboard fed by the Mercado Livre API and automatically generated contracts."
+        "pt": "Uma plataforma com dois produtos sobre a mesma base, no centro de 20+ integrações. O ERP interno (~37 áreas: CS, mentoria, comercial, financeiro, RH e TI) recebe a venda paga do Pronix Checkout e cria o mentorado sozinho, puxa o financeiro do Conta Azul para DRE e comissões, cruza leads do RD Station, agenda reuniões no Google Calendar/Meet e manda tickets para o Pronix Flow. O app do mentorado (18 áreas) conecta as contas do Mercado Livre e entrega vendas ao vivo, gestão e criação de anúncios com IA, atendimento, DRE, aulas e hotseats ao vivo em vídeo.",
+        "en": "One platform, two products on the same core, at the center of 20+ integrations. The internal ERP (~37 areas: CS, mentoring, sales, finance, HR and IT) receives paid sales from Pronix Checkout and creates the mentee automatically, pulls finance from Conta Azul for P&L and commissions, crosses leads from RD Station, books meetings on Google Calendar/Meet and sends tickets to Pronix Flow. The mentee app (18 areas) connects Mercado Livre accounts and delivers live sales, AI listing creation and management, customer service, P&L, lessons and live video hotseats."
       },
       "role": {
-        "pt": "Arquitetura, backend, frontend, deploy e treinamento dos times que usam o sistema.",
-        "en": "Architecture, backend, frontend, deployment and training for the teams that use it."
+        "pt": "Idealizei o Pronix Hub: propus o sistema, desenhei o produto e fiz o primeiro commit. Sigo como dono do frontend (~73% dos commits) e, desde jun/2026, principal autor do backend, num time que cresceu para 4 devs. No ecossistema, construí o lado Hub da integração com o Checkout, a ponte de tickets Hub → Flow, o serviço de sincronização com o Google, o serviço de tokens do Conta Azul, o gerador de anúncios com IA, a análise de mercado via MCP, os hotseats com LiveKit e as aulas com Bunny Stream.",
+        "en": "I conceived Pronix Hub: I proposed the system, designed the product and made the first commit. I remain the frontend owner (~73% of commits) and, since Jun 2026, the lead backend author, on a team that grew to 4 devs. Across the ecosystem I built the Hub side of the Checkout integration, the Hub → Flow ticket bridge, the Google sync service, the Conta Azul token service, the AI listing generator, MCP-based market analysis, LiveKit hotseats and Bunny Stream lessons."
       },
-      "results": [
+      "decisions": [
         {
-          "pt": "TODO: resultado mensurável (ex.: relatório semanal caiu de X horas para Y minutos)",
-          "en": "TODO: measurable result"
+          "pt": "Monólito modular em NestJS com API e worker em processos separados: um deploy só, mas IA, sincronizações e disparos (16 filas, 43 crons) nunca travam a API.",
+          "en": "A modular NestJS monolith with API and worker as separate processes: a single deploy, but AI, syncs and messaging (16 queues, 43 crons) never block the API."
         },
         {
-          "pt": "TODO: adoção (ex.: N pessoas de M áreas usando diariamente)",
-          "en": "TODO: adoption"
+          "pt": "Coleta do Mercado Livre num serviço à parte que escreve direto no banco: o Hub lê dados prontos e não gasta cota da API do ML.",
+          "en": "Mercado Livre collection in a separate service that writes straight to the database: the Hub reads ready-made data and spends no ML API quota."
+        },
+        {
+          "pt": "Integração com o Checkout nos dois sentidos — webhooks para eventos, pull e outbox para conciliar — porque webhook sozinho perde evento.",
+          "en": "Two-way Checkout integration — webhooks for events, pull and outbox to reconcile — because webhooks alone lose events."
+        },
+        {
+          "pt": "Staging com espelho noturno do banco de produção: toda migration é testada contra dados reais antes de subir.",
+          "en": "Staging with a nightly mirror of the production database: every migration is tested against real data before it ships."
+        }
+      ],
+      "results": [
+        {
+          "pt": "~950 mentorados na carteira usando o app no dia a dia.",
+          "en": "~950 mentees in the portfolio using the app daily."
+        },
+        {
+          "pt": "Venda paga no checkout vira mentorado com acesso, e-mail e credenciais em segundos — zero cadastro manual.",
+          "en": "A paid sale at checkout becomes a mentee with access, email and credentials within seconds — zero manual onboarding."
+        },
+        {
+          "pt": "1.038 contas do Mercado Livre conectadas e ~445 mil anúncios acompanhados.",
+          "en": "1,038 Mercado Livre accounts connected and ~445k listings tracked."
+        },
+        {
+          "pt": "Painel de comissões eliminou uma conferência manual que ocupava 63 de 88 tarefas mensais do time.",
+          "en": "The commissions panel eliminated a manual check that took 63 of the team's 88 monthly tasks."
+        },
+        {
+          "pt": "Hotseats ao vivo com ~150 participantes simultâneos dentro do próprio app.",
+          "en": "Live hotseats with ~150 concurrent participants inside the app itself."
         }
       ],
       "metrics": [
         {
-          "value": "TODO",
+          "value": "~950",
           "label": {
-            "pt": "usuários diários",
-            "en": "daily users"
+            "pt": "mentorados",
+            "en": "mentees"
           }
         },
         {
-          "value": "TODO",
+          "value": "20+",
           "label": {
-            "pt": "módulos em produção",
-            "en": "modules in production"
+            "pt": "integrações",
+            "en": "integrations"
+          }
+        },
+        {
+          "value": "1.038",
+          "label": {
+            "pt": "contas ML conectadas",
+            "en": "ML accounts connected"
           }
         }
       ],
@@ -139,19 +181,144 @@
         "Next.js",
         "NestJS",
         "PostgreSQL",
-        "Zustand",
+        "Prisma",
+        "Redis",
+        "BullMQ",
+        "Socket.IO",
+        "LiveKit",
+        "Claude",
+        "OpenAI",
+        "MCP",
         "API Mercado Livre",
-        "n8n"
+        "Conta Azul",
+        "Google Workspace",
+        "OpenTelemetry",
+        "Docker"
       ],
-      "images": [
+      "highlights": [
         {
-          "src": "/projects/vdv-hub.png",
-          "alt": {
-            "pt": "Tela do Pronix Hub com dados de clientes",
-            "en": "Pronix Hub screen with customer data"
+          "title": {
+            "pt": "O centro do ecossistema",
+            "en": "The ecosystem's core"
+          },
+          "description": {
+            "pt": "Checkout nos dois sentidos (11 webhooks de venda, cobrança, inadimplência e chargeback + pull e outbox), tickets para o Pronix Flow, API para a plataforma de WhatsApp (PronixZap) e o CRM, e uma API pública versionada para as ferramentas internas.",
+            "en": "Two-way Checkout (11 webhooks for sales, billing, delinquency and chargebacks + pull and outbox), tickets to Pronix Flow, an API for the WhatsApp platform (PronixZap) and the CRM, and a versioned public API for internal tools."
+          }
+        },
+        {
+          "title": {
+            "pt": "Mercado Livre em escala",
+            "en": "Mercado Livre at scale"
+          },
+          "description": {
+            "pt": "5 aplicativos OAuth para multiplicar a cota (~500 mil leituras/dia contra 432 mil de um app só), até 3 contas por login, publicação de anúncios em etapas idempotentes e coleta por webhooks num serviço separado.",
+            "en": "5 OAuth apps to multiply quota (~500k reads/day vs. 432k for a single app), up to 3 accounts per login, listing publication in idempotent steps and webhook-based collection in a separate service."
+          }
+        },
+        {
+          "title": {
+            "pt": "Financeiro integrado",
+            "en": "Integrated finance"
+          },
+          "description": {
+            "pt": "Conta Azul (2 empresas) alimentando DRE, DFC, fluxo de caixa e conciliação de comissões; contratos gerados em PDF e assinados no Autentique.",
+            "en": "Conta Azul (2 companies) feeding P&L, cash flow statements, forecasts and commission reconciliation; contracts generated as PDF and signed via Autentique."
+          }
+        },
+        {
+          "title": {
+            "pt": "IA em produção, com custo auditado",
+            "en": "AI in production, with audited cost"
+          },
+          "description": {
+            "pt": "9 funcionalidades com Claude e OpenAI e fallback cruzado: gerador de anúncios (texto + carrossel de imagens), plano estratégico a partir de áudio (Whisper → Claude com saída estruturada), validação de mercado via MCP e um agente que processa a fila de produtos com FOR UPDATE SKIP LOCKED.",
+            "en": "9 features on Claude and OpenAI with cross-fallback: listing generator (copy + image carousel), strategic plan from audio (Whisper → Claude with structured output), market validation via MCP and an agent that works the product queue with FOR UPDATE SKIP LOCKED."
+          }
+        },
+        {
+          "title": {
+            "pt": "Agenda e vídeo dentro do produto",
+            "en": "Scheduling and video in the product"
+          },
+          "description": {
+            "pt": "Google Calendar/Meet com OAuth por colaborador e agendamento self-service do diagnóstico; hotseats ao vivo com LiveKit (gravação no storage) e aulas com Bunny Stream.",
+            "en": "Google Calendar/Meet with per-employee OAuth and self-service diagnostic booking; live hotseats with LiveKit (recorded to storage) and lessons on Bunny Stream."
+          }
+        },
+        {
+          "title": {
+            "pt": "Observabilidade completa",
+            "en": "Full observability"
+          },
+          "description": {
+            "pt": "OpenTelemetry, Prometheus, Grafana, Loki e Tempo, mais painel das filas: métricas, logs e traces de API e worker no mesmo lugar.",
+            "en": "OpenTelemetry, Prometheus, Grafana, Loki and Tempo, plus a queue dashboard: API and worker metrics, logs and traces in one place."
           }
         }
       ],
+      "timeline": [
+        {
+          "date": "2025-10",
+          "label": {
+            "pt": "Proponho a ideia do Hub e faço o primeiro commit: painel interno da equipe.",
+            "en": "I pitch the idea of the Hub and make the first commit: an internal team dashboard."
+          }
+        },
+        {
+          "date": "2026-01",
+          "label": {
+            "pt": "Passo a contribuir também no backend; integrações com Google e Conta Azul.",
+            "en": "I start contributing to the backend as well; Google and Conta Azul integrations."
+          }
+        },
+        {
+          "date": "2026-06",
+          "label": {
+            "pt": "Viro o principal autor do backend; integração com o Pronix Checkout e IA no app do mentorado.",
+            "en": "I become the lead backend author; Pronix Checkout integration and AI in the mentee app."
+          }
+        },
+        {
+          "date": "2026-09",
+          "label": {
+            "pt": "Ponte de tickets com o Pronix Flow e 5 aplicativos do Mercado Livre.",
+            "en": "Ticket bridge to Pronix Flow and 5 Mercado Livre apps."
+          }
+        },
+        {
+          "date": "2026-10",
+          "label": {
+            "pt": "~9.500 commits somando front e back, em produção contínua.",
+            "en": "~9,500 commits across front and back, continuously in production."
+          }
+        }
+      ],
+      "images": [
+        {
+          "src": "/projects/pronix-hub-mentorado.webp",
+          "alt": {
+            "pt": "Painel de operação do mentorado no Pronix Hub com meta, projeção, margem, Mercado Ads e últimas vendas",
+            "en": "Mentee operations dashboard in Pronix Hub with goal, forecast, margin, Mercado Ads and latest sales"
+          },
+          "caption": {
+            "pt": "App do mentorado · acompanhamento diário da loja (conta de demonstração)",
+            "en": "Mentee app · daily store tracking (demo account)"
+          }
+        },
+        {
+          "src": "/projects/vdv-hub.png",
+          "alt": {
+            "pt": "Painel de gestão de entrega do ERP interno com KPIs e alertas por mentorado",
+            "en": "Internal ERP delivery management dashboard with KPIs and per-mentee alerts"
+          },
+          "caption": {
+            "pt": "ERP interno · gestão de entrega (primeira versão, ainda como VDV Hub)",
+            "en": "Internal ERP · delivery management (first version, still branded VDV Hub)"
+          }
+        }
+      ],
+      "cover": "/projects/pronix-hub-mentorado.webp",
       "links": [],
       "featured": true,
       "confidential": true,
@@ -159,18 +326,687 @@
       "architecture": {
         "nodes": [
           {
-            "id": "team",
-            "label": "Times internos",
+            "id": "mentee",
+            "label": "App do mentorado",
             "kind": "client",
             "col": 0,
             "row": 1
           },
           {
-            "id": "web",
-            "label": "Next.js",
+            "id": "erp",
+            "label": "ERP interno",
+            "kind": "client",
+            "col": 0,
+            "row": 2
+          },
+          {
+            "id": "ml",
+            "label": "Mercado Livre",
+            "kind": "external",
+            "col": 0,
+            "row": 4
+          },
+          {
+            "id": "checkout",
+            "label": "Pronix Checkout",
+            "kind": "service",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "rd",
+            "label": "RD Station CRM",
+            "kind": "external",
+            "col": 1,
+            "row": 3
+          },
+          {
+            "id": "coletor",
+            "label": "Coletor ML",
+            "kind": "queue",
+            "col": 1,
+            "row": 4
+          },
+          {
+            "id": "flow",
+            "label": "Pronix Flow",
+            "kind": "service",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "hub",
+            "label": "Hub API (NestJS)",
+            "kind": "service",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "data",
+            "label": "Postgres · Redis",
+            "kind": "db",
+            "col": 2,
+            "row": 2
+          },
+          {
+            "id": "zap",
+            "label": "PronixZap WhatsApp",
+            "kind": "service",
+            "col": 3,
+            "row": 0
+          },
+          {
+            "id": "ca",
+            "label": "Conta Azul",
+            "kind": "external",
+            "col": 3,
+            "row": 1
+          },
+          {
+            "id": "google",
+            "label": "Google Agenda/Meet",
+            "kind": "external",
+            "col": 3,
+            "row": 2
+          },
+          {
+            "id": "ai",
+            "label": "Claude · OpenAI",
+            "kind": "ai",
+            "col": 3,
+            "row": 3
+          },
+          {
+            "id": "media",
+            "label": "LiveKit · Bunny",
+            "kind": "external",
+            "col": 3,
+            "row": 4
+          }
+        ],
+        "edges": [
+          {
+            "from": "mentee",
+            "to": "hub"
+          },
+          {
+            "from": "erp",
+            "to": "hub"
+          },
+          {
+            "from": "checkout",
+            "to": "hub"
+          },
+          {
+            "from": "hub",
+            "to": "flow"
+          },
+          {
+            "from": "hub",
+            "to": "data"
+          },
+          {
+            "from": "rd",
+            "to": "data",
+            "label": "leads"
+          },
+          {
+            "from": "ml",
+            "to": "coletor",
+            "label": "webhook"
+          },
+          {
+            "from": "coletor",
+            "to": "data"
+          },
+          {
+            "from": "hub",
+            "to": "zap",
+            "label": "tarefas"
+          },
+          {
+            "from": "hub",
+            "to": "ca",
+            "label": "DRE"
+          },
+          {
+            "from": "hub",
+            "to": "google",
+            "label": "agenda"
+          },
+          {
+            "from": "hub",
+            "to": "ai",
+            "label": "anúncio"
+          },
+          {
+            "from": "hub",
+            "to": "media",
+            "label": "lives"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "pronix-checkout",
+      "title": "Pronix Checkout",
+      "category": {
+        "pt": "Pagamentos + back-office · Full Stack",
+        "en": "Payments + back office · Full Stack"
+      },
+      "year": "2026",
+      "kind": "case",
+      "context": {
+        "pt": "VDV Group / Pronix Tech · jun/2026 → hoje · ~83% dos commits",
+        "en": "VDV Group / Pronix Tech · Jun 2026 → now · ~83% of commits"
+      },
+      "tagline": {
+        "pt": "Do link de venda ao dinheiro conciliado: checkout, contrato, cobrança e comissão num fluxo só — com dinheiro real.",
+        "en": "From sales link to reconciled cash: checkout, contract, billing and commission in one flow — with real money."
+      },
+      "problem": {
+        "pt": "As mentorias eram vendidas sem um processo único: cada venda virava planilhas, a comissão era conferida à mão, a conciliação no Conta Azul era manual e os contratos eram assinados por fora.",
+        "en": "Mentoring programs were sold without a single process: every sale became spreadsheets, commissions were checked by hand, reconciliation in Conta Azul was manual and contracts were signed elsewhere."
+      },
+      "solution": {
+        "pt": "Um checkout por link de venda (PF/PJ, contrato congelado no aceite, Pix, cartão e boleto com entrada dividida entre métodos) e um painel para Vendas, Financeiro, Sucesso do Cliente e Admin — com roteamento entre gateways, assinatura eletrônica, conciliação no Conta Azul, régua de cobrança e board de CS em tempo real.",
+        "en": "A per-sale checkout link (individuals and companies, contract frozen at acceptance, Pix, card and boleto with split down payments) plus a back office for Sales, Finance, Customer Success and Admin — with gateway routing, e-signature, Conta Azul reconciliation, dunning and a real-time CS board."
+      },
+      "role": {
+        "pt": "Principal desenvolvedor (~83% dos commits): modelagem financeira, integrações de pagamento, painel e operação em produção, num fluxo de PR por ticket.",
+        "en": "Lead developer (~83% of commits): financial modeling, payment integrations, back office and production operations, in a PR-per-ticket workflow."
+      },
+      "decisions": [
+        {
+          "pt": "Uma única porta para marcar a venda como paga (compare-and-set): webhook e polling podem chegar juntos sem pagar comissão em dobro.",
+          "en": "A single gate to mark a sale as paid (compare-and-set): webhook and polling can race without double-paying commission."
+        },
+        {
+          "pt": "O gateway fica gravado em cada cobrança: mudar o roteamento só afeta cobranças novas.",
+          "en": "The gateway is stored on each charge: changing the routing only affects new charges."
+        },
+        {
+          "pt": "HTTP 200 do gateway não é pagamento: assinaturas só contam quando a fatura confirma.",
+          "en": "A gateway HTTP 200 is not a payment: subscriptions only count once the invoice confirms."
+        }
+      ],
+      "results": [
+        {
+          "pt": "Venda, contrato, cobrança, conciliação e comissão num fluxo só, em produção com dinheiro real.",
+          "en": "Sale, contract, billing, reconciliation and commission in a single flow, in production with real money."
+        },
+        {
+          "pt": "7 integrações financeiras: Pagar.me (3 contas), Asaas, Pix direto em 3 bancos com mTLS, Conta Azul e Autentique.",
+          "en": "7 financial integrations: Pagar.me (3 accounts), Asaas, direct Pix with 3 banks over mTLS, Conta Azul and Autentique."
+        },
+        {
+          "pt": "Venda paga dispara a criação do mentorado no Pronix Hub automaticamente.",
+          "en": "A paid sale automatically creates the mentee in Pronix Hub."
+        },
+        {
+          "pt": "335+ PRs e 253 arquivos de teste cobrindo as regras financeiras.",
+          "en": "335+ PRs and 253 test files covering the financial rules."
+        }
+      ],
+      "metrics": [
+        {
+          "value": "7",
+          "label": {
+            "pt": "integrações financeiras",
+            "en": "financial integrations"
+          }
+        },
+        {
+          "value": "335+",
+          "label": {
+            "pt": "PRs",
+            "en": "PRs"
+          }
+        },
+        {
+          "value": "253",
+          "label": {
+            "pt": "arquivos de teste",
+            "en": "test files"
+          }
+        }
+      ],
+      "stack": [
+        "Next.js",
+        "React",
+        "PostgreSQL",
+        "Prisma",
+        "Zod",
+        "Puppeteer",
+        "Vitest",
+        "OpenTelemetry",
+        "Docker",
+        "WhatsApp"
+      ],
+      "highlights": [
+        {
+          "title": {
+            "pt": "Abstração multi-gateway",
+            "en": "Multi-gateway abstraction"
+          },
+          "description": {
+            "pt": "Uma interface de pagamento com roteamento em dois eixos (produto × closer ou squad) sobre Pagar.me, Asaas e Pix Bacen — mais um gateway falso para testes de ponta a ponta.",
+            "en": "One payment interface with two-axis routing (product × closer or squad) over Pagar.me, Asaas and Pix Bacen — plus a fake gateway for end-to-end tests."
+          }
+        },
+        {
+          "title": {
+            "pt": "Pix com mTLS",
+            "en": "Pix over mTLS"
+          },
+          "description": {
+            "pt": "Integração direta com Inter, Sicoob e Itaú usando certificado ICP-Brasil e TLS mútuo.",
+            "en": "Direct integration with Inter, Sicoob and Itaú using an ICP-Brasil certificate and mutual TLS."
+          }
+        },
+        {
+          "title": {
+            "pt": "Contrato que vale",
+            "en": "Contracts that hold"
+          },
+          "description": {
+            "pt": "Editor HTML saneado no servidor → PDF com Puppeteer → assinatura eletrônica no Autentique, com o texto congelado no momento do aceite.",
+            "en": "Server-sanitized HTML editor → PDF with Puppeteer → e-signature via Autentique, with the text frozen at the moment of acceptance."
+          }
+        },
+        {
+          "title": {
+            "pt": "Conciliação automática",
+            "en": "Automatic reconciliation"
+          },
+          "description": {
+            "pt": "Lançamento, cronograma de parcelas e baixa por API no Conta Azul, com detecção de divergência entre o checkout e o ERP.",
+            "en": "Entries, installment schedules and settlement via the Conta Azul API, with drift detection between checkout and ERP."
+          }
+        },
+        {
+          "title": {
+            "pt": "Rotinas idempotentes e observáveis",
+            "en": "Idempotent, observable jobs"
+          },
+          "description": {
+            "pt": "11 rotinas agendadas que nunca derrubam o processo, eventos ao Hub com recuperação e telemetria via OpenTelemetry, Loki e Prometheus.",
+            "en": "11 scheduled jobs that never crash the process, events to the Hub with recovery, and telemetry via OpenTelemetry, Loki and Prometheus."
+          }
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2026-06",
+          "label": {
+            "pt": "Início do projeto e primeiro checkout por link.",
+            "en": "Project kickoff and first link-based checkout."
+          }
+        },
+        {
+          "date": "2026-07",
+          "label": {
+            "pt": "Contrato com assinatura eletrônica e multi-gateway.",
+            "en": "E-signed contracts and multi-gateway."
+          }
+        },
+        {
+          "date": "2026-08",
+          "label": {
+            "pt": "Pix direto com mTLS e conciliação no Conta Azul.",
+            "en": "Direct Pix over mTLS and Conta Azul reconciliation."
+          }
+        },
+        {
+          "date": "2026-10",
+          "label": {
+            "pt": "Board de CS em tempo real e régua de cobrança.",
+            "en": "Real-time CS board and dunning flow."
+          }
+        }
+      ],
+      "images": [],
+      "cover": "",
+      "links": [],
+      "featured": true,
+      "confidential": true,
+      "status": "production",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "closer",
+            "label": "Closer",
+            "kind": "client",
+            "col": 0,
+            "row": 0
+          },
+          {
+            "id": "buyer",
+            "label": "Cliente",
+            "kind": "client",
+            "col": 0,
+            "row": 2
+          },
+          {
+            "id": "app",
+            "label": "Next.js 16",
             "kind": "service",
             "col": 1,
             "row": 1
+          },
+          {
+            "id": "pg",
+            "label": "PostgreSQL",
+            "kind": "db",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "gw",
+            "label": "Pagar.me · Asaas · Pix",
+            "kind": "external",
+            "col": 2,
+            "row": 2
+          },
+          {
+            "id": "ca",
+            "label": "Conta Azul",
+            "kind": "external",
+            "col": 3,
+            "row": 0
+          },
+          {
+            "id": "sign",
+            "label": "Autentique",
+            "kind": "external",
+            "col": 3,
+            "row": 2
+          },
+          {
+            "id": "hub",
+            "label": "Pronix Hub",
+            "kind": "service",
+            "col": 4,
+            "row": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "closer",
+            "to": "app",
+            "label": "link de venda"
+          },
+          {
+            "from": "buyer",
+            "to": "app",
+            "label": "checkout"
+          },
+          {
+            "from": "app",
+            "to": "pg",
+            "label": "Prisma"
+          },
+          {
+            "from": "app",
+            "to": "gw",
+            "label": "cobrança"
+          },
+          {
+            "from": "app",
+            "to": "ca",
+            "label": "conciliação"
+          },
+          {
+            "from": "app",
+            "to": "sign",
+            "label": "contrato"
+          },
+          {
+            "from": "app",
+            "to": "hub",
+            "label": "venda paga"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "agente-os",
+      "title": "AgenteOS",
+      "category": {
+        "pt": "SaaS multi-tenant · Agente de IA",
+        "en": "Multi-tenant SaaS · AI agent"
+      },
+      "year": "2026",
+      "kind": "case",
+      "context": {
+        "pt": "Produto SaaS próprio · mai–set/2026 · projeto solo · em produção com um cliente piloto (chaveiro)",
+        "en": "My own SaaS product · May–Sep 2026 · solo project · in production with a pilot client (locksmith)"
+      },
+      "tagline": {
+        "pt": "Um agente de IA que atende o WhatsApp de pequenas empresas de serviço: entende o pedido, orça, agenda e chama um humano quando precisa.",
+        "en": "An AI agent that answers WhatsApp for small service businesses: it understands the request, quotes, books and calls a human when needed."
+      },
+      "problem": {
+        "pt": "Pequenas empresas de serviço (chaveiro, oficina, clínica) perdem clientes que mandam mensagem fora de hora, e orçamento e ordem de serviço ficam no papel. No meu próprio MVP, o agente tinha crescido para um workflow no n8n com 61 nós: cada versão exigia import manual e religar credenciais em 31 nós, a URL da API estava fixa em 12 lugares e o caminho do agente não tinha nenhum teste.",
+        "en": "Small service businesses (locksmiths, repair shops, clinics) lose customers who message after hours, and quotes and work orders live on paper. In my own MVP, the agent had grown into a 61-node n8n workflow: every release meant a manual import and relinking credentials on 31 nodes, the API URL was hardcoded in 12 places and the agent path had zero tests."
+      },
+      "solution": {
+        "pt": "Um SaaS multi-tenant com site, app da empresa e painel super-admin. O agente atende pelo WhatsApp, entende áudio e imagem, busca o serviço por similaridade (pgvector), aplica as regras de preço da empresa, gera orçamento com link público, converte em ordem de serviço, marca horário, manda lembrete e passa para um humano quando precisa — com inbox em tempo real mostrando \"por que essa resposta?\" em cada mensagem. Inclui cobrança recorrente com Stripe, trial, faturas, auditoria e controle de custo de IA por empresa.",
+        "en": "A multi-tenant SaaS with a website, a business app and a super-admin panel. The agent answers on WhatsApp, understands audio and images, finds the service by similarity (pgvector), applies the business's pricing rules, generates a quote with a public link, converts it into a work order, books the slot, sends reminders and hands off to a human when needed — with a real-time inbox showing \"why this reply?\" on every message. Includes recurring billing with Stripe, trials, invoices, auditing and per-business AI cost control."
+      },
+      "role": {
+        "pt": "Projeto solo (100% dos commits): produto, arquitetura, backend, frontend, infraestrutura, documentação e a migração do agente do n8n para código.",
+        "en": "Solo project (100% of commits): product, architecture, backend, frontend, infrastructure, documentation and migrating the agent from n8n to code."
+      },
+      "decisions": [
+        {
+          "pt": "Sair do low-code: o n8n deu velocidade no MVP, mas travava testes, CI e deploy. Reescrevi o agente em NestJS nó a nó, com placar de paridade, até desligar o n8n.",
+          "en": "Leaving low-code: n8n made the MVP fast, but blocked tests, CI and deployment. I rewrote the agent in NestJS node by node, with a parity scorecard, until n8n was switched off."
+        },
+        {
+          "pt": "Laço de tool-calling próprio sobre fetch, atrás de uma interface, em vez de SDK ou framework de agente: menos dependências e um segundo provedor de LLM saiu barato.",
+          "en": "A custom tool-calling loop over fetch, behind an interface, instead of an SDK or agent framework: fewer dependencies, and a second LLM provider came cheap."
+        },
+        {
+          "pt": "O que precisa ser exato fica no código, não no modelo: preço avaliado no servidor, status de OS com frase pronta e quebra de mensagem determinística — \"o modelo reformula bem, mas inventa mal\".",
+          "en": "What must be exact stays in code, not the model: server-side pricing, canned work-order status phrases and deterministic message splitting — \"the model rephrases well but invents poorly\"."
+        }
+      ],
+      "results": [
+        {
+          "pt": "Em produção com um cliente piloto desde 09/2026, com o agente rodando em código próprio.",
+          "en": "In production with a pilot client since Sep 2026, with the agent running on its own code."
+        },
+        {
+          "pt": "52 dos 61 nós do n8n migrados e validados em produção; os outros 9 ficaram desnecessários na nova arquitetura.",
+          "en": "52 of the 61 n8n nodes migrated and validated in production; the other 9 became unnecessary in the new architecture."
+        },
+        {
+          "pt": "Testes da API de 181 para 489 durante a migração, com CI bloqueando o merge.",
+          "en": "API tests went from 181 to 489 during the migration, with CI gating merges."
+        },
+        {
+          "pt": "Modelo escolhido por custo medido: o Gemini Flash Lite saiu ~3× mais barato que o Flash nos mesmos casos, sem tokens de raciocínio.",
+          "en": "Model picked by measured cost: Gemini Flash Lite came out ~3× cheaper than Flash on the same cases, with no reasoning tokens."
+        }
+      ],
+      "metrics": [
+        {
+          "value": "489",
+          "label": {
+            "pt": "testes da API",
+            "en": "API tests"
+          }
+        },
+        {
+          "value": "52/61",
+          "label": {
+            "pt": "nós do n8n migrados",
+            "en": "n8n nodes migrated"
+          }
+        },
+        {
+          "value": "9",
+          "label": {
+            "pt": "tools do agente",
+            "en": "agent tools"
+          }
+        }
+      ],
+      "stack": [
+        "NestJS",
+        "Next.js",
+        "tRPC",
+        "PostgreSQL",
+        "Supabase",
+        "Prisma",
+        "Redis",
+        "BullMQ",
+        "Gemini",
+        "OpenAI",
+        "WhatsApp",
+        "Stripe",
+        "Turborepo",
+        "Docker",
+        "Vercel"
+      ],
+      "highlights": [
+        {
+          "title": {
+            "pt": "Do n8n para código sem perder nada",
+            "en": "From n8n to code without losing anything"
+          },
+          "description": {
+            "pt": "Cada nó do workflow mapeado para código e documentado num placar de paridade: 52 de 61 migrados, testes de 181 para 489 e o n8n desligado de vez.",
+            "en": "Every workflow node mapped to code and documented on a parity scorecard: 52 of 61 migrated, tests from 181 to 489 and n8n switched off for good."
+          }
+        },
+        {
+          "title": {
+            "pt": "LLM trocável por empresa",
+            "en": "Per-business swappable LLM"
+          },
+          "description": {
+            "pt": "OpenAI e Gemini atrás da mesma interface, com teste de contrato. Cada empresa escolhe o modelo pelo custo-benefício, com um catálogo de preços como fonte única.",
+            "en": "OpenAI and Gemini behind the same interface, with a contract test. Each business picks its model by cost-benefit, with a pricing catalog as the single source of truth."
+          }
+        },
+        {
+          "title": {
+            "pt": "Turno do agente à prova de concorrência",
+            "en": "A concurrency-proof agent turn"
+          },
+          "description": {
+            "pt": "Debounce de 3 s na fila, lease por conversa e consolidação de mensagens em rajada; 9 invariantes documentados a partir de bugs reais, como laço infinito com mensagens próprias.",
+            "en": "3 s queue debounce, per-conversation lease and burst-message consolidation; 9 invariants documented from real bugs, such as infinite loops on self-sent messages."
+          }
+        },
+        {
+          "title": {
+            "pt": "Multi-tenant em camadas",
+            "en": "Layered multi-tenancy"
+          },
+          "description": {
+            "pt": "organization_id em todo o domínio, RLS no Postgres e transação por inquilino. Telefone e empresa são injetados pelo runner e ficam fora do schema que o LLM vê — o modelo não consegue trocá-los.",
+            "en": "organization_id across the whole domain, Postgres RLS and per-tenant transactions. Phone and business are injected by the runner and kept out of the schema the LLM sees — the model can't swap them."
+          }
+        },
+        {
+          "title": {
+            "pt": "IA explicável no inbox",
+            "en": "Explainable AI in the inbox"
+          },
+          "description": {
+            "pt": "Cada resposta do agente tem \"por que essa resposta?\", com o rastro das tools chamadas; o atendente assume a conversa com um clique (modo IA ⇄ Humano) em tempo real.",
+            "en": "Every agent reply has a \"why this reply?\" link with the trace of tools called; staff take over the conversation in one click (AI ⇄ Human mode) in real time."
+          }
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2026-05",
+          "label": {
+            "pt": "MVP: auth, RLS, inbox em tempo real, catálogo com pgvector, orçamento/OS e cobrança.",
+            "en": "MVP: auth, RLS, real-time inbox, pgvector catalog, quotes/work orders and billing."
+          }
+        },
+        {
+          "date": "2026-07",
+          "label": {
+            "pt": "Piloto: agente confiável, link público de orçamento, CI e Sentry; banco migrado para São Paulo.",
+            "en": "Pilot: reliable agent, public quote links, CI and Sentry; database moved to São Paulo."
+          }
+        },
+        {
+          "date": "2026-08",
+          "label": {
+            "pt": "Áudio e imagem, agenda, regras de preço, custo de IA e trial de 7 dias.",
+            "en": "Audio and images, scheduling, pricing rules, AI cost tracking and a 7-day trial."
+          }
+        },
+        {
+          "date": "2026-09",
+          "label": {
+            "pt": "Agente migrado do n8n para NestJS, Gemini como segundo provedor e rastro no inbox.",
+            "en": "Agent migrated from n8n to NestJS, Gemini as a second provider and traces in the inbox."
+          }
+        }
+      ],
+      "images": [
+        {
+          "src": "/projects/agente-os-inbox.webp",
+          "alt": {
+            "pt": "Inbox do AgenteOS com conversa de WhatsApp atendida pela IA, agendamento e passagem para atendimento humano",
+            "en": "AgenteOS inbox with a WhatsApp conversation handled by AI, booking and handoff to a human"
+          },
+          "caption": {
+            "pt": "Inbox em tempo real · IA agenda e passa para um humano",
+            "en": "Real-time inbox · AI books and hands off to a human"
+          }
+        }
+      ],
+      "cover": "/projects/agente-os-inbox.webp",
+      "links": [
+        {
+          "label": {
+            "pt": "Ver produto",
+            "en": "See the product"
+          },
+          "url": "https://agente-os-web.vercel.app"
+        }
+      ],
+      "featured": true,
+      "confidential": false,
+      "status": "production",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "wa",
+            "label": "Cliente WhatsApp",
+            "kind": "client",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "stripe",
+            "label": "Stripe",
+            "kind": "external",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "evo",
+            "label": "Evolution API",
+            "kind": "external",
+            "col": 1,
+            "row": 1
+          },
+          {
+            "id": "web",
+            "label": "Painel Next.js",
+            "kind": "client",
+            "col": 2,
+            "row": 0
           },
           {
             "id": "api",
@@ -180,29 +1016,29 @@
             "row": 1
           },
           {
-            "id": "db",
-            "label": "PostgreSQL",
-            "kind": "db",
-            "col": 3,
-            "row": 0
+            "id": "queue",
+            "label": "BullMQ + Redis",
+            "kind": "queue",
+            "col": 2,
+            "row": 2
           },
           {
-            "id": "ml",
-            "label": "API Mercado Livre",
-            "kind": "external",
+            "id": "db",
+            "label": "Supabase pgvector",
+            "kind": "db",
             "col": 3,
             "row": 1
           },
           {
-            "id": "n8n",
-            "label": "n8n",
-            "kind": "queue",
+            "id": "agent",
+            "label": "Agent Runner",
+            "kind": "ai",
             "col": 3,
             "row": 2
           },
           {
-            "id": "ai",
-            "label": "Agentes de IA",
+            "id": "llm",
+            "label": "Gemini / OpenAI",
             "kind": "ai",
             "col": 4,
             "row": 2
@@ -210,182 +1046,640 @@
         ],
         "edges": [
           {
-            "from": "team",
-            "to": "web"
+            "from": "wa",
+            "to": "evo",
+            "label": "msg"
           },
           {
-            "from": "web",
+            "from": "evo",
             "to": "api",
-            "label": "REST"
-          },
-          {
-            "from": "api",
-            "to": "db"
-          },
-          {
-            "from": "api",
-            "to": "ml",
-            "label": "sync"
-          },
-          {
-            "from": "api",
-            "to": "n8n",
             "label": "webhook"
           },
           {
-            "from": "n8n",
-            "to": "ai"
+            "from": "stripe",
+            "to": "api"
+          },
+          {
+            "from": "web",
+            "to": "api"
+          },
+          {
+            "from": "api",
+            "to": "queue",
+            "label": "3s"
+          },
+          {
+            "from": "api",
+            "to": "db",
+            "label": "RLS"
+          },
+          {
+            "from": "queue",
+            "to": "agent"
+          },
+          {
+            "from": "agent",
+            "to": "db"
+          },
+          {
+            "from": "agent",
+            "to": "llm",
+            "label": "tools"
           }
         ]
       }
     },
     {
-      "slug": "ai-sdr-agent",
-      "title": "AI SDR Agent",
+      "slug": "nobile-stones",
+      "title": "Nobile Stones",
       "category": {
-        "pt": "Agente de IA · Automação",
-        "en": "AI Agent · Automation"
+        "pt": "Sistema de gestão + IA · Cliente",
+        "en": "Management system + AI · Client"
       },
-      "year": "2025",
+      "year": "2026",
+      "kind": "case",
+      "context": {
+        "pt": "Cliente: marmoraria Nobile Stones · jul–set/2026 · projeto solo, do discovery ao deploy",
+        "en": "Client: Nobile Stones (marble & stone shop) · Jul–Sep 2026 · solo project, from discovery to deploy"
+      },
       "tagline": {
-        "pt": "Um SDR autônomo que recupera leads, agenda reuniões e gera contratos sem intervenção humana.",
-        "en": "An autonomous SDR that recovers leads, books meetings and generates contracts with no human in the loop."
+        "pt": "Uma marmoraria inteira num sistema: WhatsApp triado por IA, orçamentos, serviços, estoque de chapas e DRE.",
+        "en": "A whole stone shop in one system: AI-triaged WhatsApp, quotes, jobs, slab inventory and P&L."
       },
       "problem": {
-        "pt": "Leads esfriavam porque o time comercial não dava conta de responder rápido e de fazer follow-up com todo mundo.",
-        "en": "Leads went cold because the sales team could not reply fast enough or follow up with everyone."
+        "pt": "A marmoraria operava no improviso: cliente sem resposta no WhatsApp, orçamento manual sem padrão de preço, estoque de chapas \"de cabeça\" e nenhuma visão de caixa, margem ou DRE.",
+        "en": "The shop ran on improvisation: customers left unanswered on WhatsApp, manual quotes with no pricing standard, slab inventory kept \"in someone's head\" and no view of cash, margin or P&L."
       },
       "solution": {
-        "pt": "Um agente construído com n8n, LLMs, Supabase e Redis que conversa com o lead, qualifica, agenda a reunião e, quando fecha, gera o contrato. Memória de conversa em Redis e todo o histórico salvo no Supabase.",
-        "en": "An agent built with n8n, LLMs, Supabase and Redis that talks to the lead, qualifies them, books the meeting and, once closed, generates the contract. Conversation memory lives in Redis and the full history in Supabase."
+        "pt": "Um sistema web + PWA com triagem do WhatsApp por IA (acolhe, classifica e passa para um humano), inbox em tempo real, CRM, orçamentos versionados com PDF, kanban de serviços, estoque com custo médio e financeiro com DRE — além de um site com CMS próprio que capta leads.",
+        "en": "A web + PWA system with AI WhatsApp triage (greets, classifies and hands off to a human), a real-time inbox, CRM, versioned quotes with PDF, a jobs kanban, inventory with weighted average cost and finance with P&L — plus a website with its own CMS that captures leads."
       },
       "role": {
-        "pt": "Concepção, desenho dos fluxos, prompts, integrações e monitoramento.",
-        "en": "Concept, flow design, prompts, integrations and monitoring."
+        "pt": "Projeto solo (114 commits): levantamento com o dono, produto, arquitetura, código, testes, deploy e operação.",
+        "en": "Solo project (114 commits): discovery with the owner, product, architecture, code, tests, deployment and operations."
       },
-      "results": [
+      "decisions": [
         {
-          "pt": "TODO: ex.: tempo de primeira resposta caiu de X horas para segundos",
-          "en": "TODO: e.g. first response time went from X hours to seconds"
+          "pt": "A IA só faz triagem — nunca negocia preço. Uma regra única e testada decide quando ela pode responder, e o atendimento sempre termina num humano.",
+          "en": "AI only triages — it never negotiates price. A single tested rule decides when it may reply, and the conversation always ends with a human."
         },
         {
-          "pt": "TODO: ex.: N leads recuperados / reuniões agendadas por mês",
-          "en": "TODO: e.g. N leads recovered / meetings booked per month"
+          "pt": "Provedor de LLM e gateway de WhatsApp atrás de interfaces: Gemini com fallback para OpenAI, e a Evolution API trocável.",
+          "en": "LLM provider and WhatsApp gateway behind interfaces: Gemini with OpenAI fallback, and a swappable Evolution API."
+        },
+        {
+          "pt": "Permissão aplicada na serialização: a secretária nunca recebe custo nem margem, nem pela API.",
+          "en": "Permissions enforced at serialization: the secretary never receives cost or margin, not even via the API."
+        }
+      ],
+      "results": [
+        {
+          "pt": "Todo cliente do WhatsApp recebe resposta imediata e chega ao atendente já classificado, com resumo.",
+          "en": "Every WhatsApp customer gets an immediate reply and reaches staff already classified, with a summary."
+        },
+        {
+          "pt": "Orçamento padronizado e versionado, com PDF pronto para enviar.",
+          "en": "Standardized, versioned quotes with a ready-to-send PDF."
+        },
+        {
+          "pt": "Primeira visão de caixa, margem e DRE do negócio.",
+          "en": "The business's first view of cash, margin and P&L."
+        },
+        {
+          "pt": "113 testes travando as regras de negócio, com CI completo (lint, typecheck, testes e build).",
+          "en": "113 tests locking the business rules, with full CI (lint, typecheck, tests and build)."
         }
       ],
       "metrics": [
         {
-          "value": "24/7",
+          "value": "121",
           "label": {
-            "pt": "atendimento",
-            "en": "coverage"
+            "pt": "endpoints",
+            "en": "endpoints"
           }
         },
         {
-          "value": "TODO",
+          "value": "113",
           "label": {
-            "pt": "leads recuperados por mês",
-            "en": "leads recovered per month"
+            "pt": "testes de regra",
+            "en": "rule tests"
+          }
+        },
+        {
+          "value": "45",
+          "label": {
+            "pt": "telas",
+            "en": "screens"
           }
         }
       ],
       "stack": [
-        "n8n",
-        "LLMs",
+        "Next.js",
+        "NestJS",
+        "PostgreSQL",
+        "Prisma",
         "Supabase",
         "Redis",
-        "Webhooks"
+        "BullMQ",
+        "Socket.IO",
+        "Gemini",
+        "OpenAI",
+        "WhatsApp",
+        "Docker"
       ],
-      "images": [
+      "highlights": [
         {
-          "src": "/projects/ai-sdr.png",
-          "alt": {
-            "pt": "Fluxo do agente SDR no n8n",
-            "en": "SDR agent workflow in n8n"
+          "title": {
+            "pt": "IA que nunca deixa o cliente sem resposta",
+            "en": "AI that never leaves a customer hanging"
+          },
+          "description": {
+            "pt": "Debounce que junta a rajada de mensagens numa resposta só, 3 ferramentas (tool calling), retry com backoff, fallback de provedor e handoff automático para um humano se tudo falhar.",
+            "en": "Debounce that merges a burst of messages into one reply, 3 tools (tool calling), retry with backoff, provider fallback and automatic human handoff if everything fails."
+          }
+        },
+        {
+          "title": {
+            "pt": "Rigor financeiro",
+            "en": "Financial rigor"
+          },
+          "description": {
+            "pt": "Valores em Decimal, custo médio ponderado só na entrada de compra, snapshots de orçamento por versão e numeração por sequence do Postgres.",
+            "en": "Decimal money, weighted average cost only on purchase entries, per-version quote snapshots and Postgres-sequence numbering."
+          }
+        },
+        {
+          "title": {
+            "pt": "Operação pensada para quem não é técnico",
+            "en": "Operations built for non-technical owners"
+          },
+          "description": {
+            "pt": "Health check por componente, watchdog da conexão do WhatsApp com alerta por push e script de backup com ensaio de restauração.",
+            "en": "Per-component health checks, a WhatsApp connection watchdog with push alerts and a backup script with restore rehearsal."
+          }
+        },
+        {
+          "title": {
+            "pt": "Tempo real no balcão",
+            "en": "Real time at the counter"
+          },
+          "description": {
+            "pt": "Inbox com Socket.IO (adapter Redis) e Web Push: a mensagem chega no celular da equipe assim que a IA passa o atendimento.",
+            "en": "Inbox over Socket.IO (Redis adapter) and Web Push: the message hits the team's phone as soon as the AI hands off."
           }
         }
       ],
+      "timeline": [
+        {
+          "date": "2026-07",
+          "label": {
+            "pt": "Discovery com o dono e MVP: inbox, triagem por IA e orçamentos.",
+            "en": "Discovery with the owner and MVP: inbox, AI triage and quotes."
+          }
+        },
+        {
+          "date": "2026-09",
+          "label": {
+            "pt": "Fases 2 e 3: estoque, financeiro com DRE e site com CMS.",
+            "en": "Phases 2 and 3: inventory, finance with P&L and CMS-driven website."
+          }
+        }
+      ],
+      "images": [
+        {
+          "src": "/projects/nobile-stones-landing.webp",
+          "alt": {
+            "pt": "Landing page da Nobile Stones com chamada para orçamento no WhatsApp",
+            "en": "Nobile Stones landing page with a call to request a quote on WhatsApp"
+          },
+          "caption": {
+            "pt": "Site com CMS próprio · captação de leads para o WhatsApp",
+            "en": "Site with its own CMS · lead capture into WhatsApp"
+          }
+        }
+      ],
+      "cover": "/projects/nobile-stones-landing.webp",
       "links": [],
       "featured": true,
-      "confidential": true,
+      "confidential": false,
       "status": "production",
       "architecture": {
         "nodes": [
           {
-            "id": "lead",
-            "label": "Lead",
+            "id": "cliente",
+            "label": "Cliente (WhatsApp)",
             "kind": "client",
             "col": 0,
-            "row": 1
+            "row": 0
           },
           {
-            "id": "n8n",
-            "label": "n8n",
-            "kind": "queue",
+            "id": "team",
+            "label": "Equipe",
+            "kind": "client",
+            "col": 0,
+            "row": 2
+          },
+          {
+            "id": "evo",
+            "label": "Evolution API",
+            "kind": "external",
             "col": 1,
+            "row": 0
+          },
+          {
+            "id": "web",
+            "label": "Next.js PWA",
+            "kind": "service",
+            "col": 1,
+            "row": 2
+          },
+          {
+            "id": "api",
+            "label": "NestJS API",
+            "kind": "service",
+            "col": 2,
             "row": 1
           },
           {
-            "id": "llm",
-            "label": "LLM",
-            "kind": "ai",
+            "id": "queue",
+            "label": "BullMQ",
+            "kind": "queue",
             "col": 2,
             "row": 0
           },
           {
-            "id": "redis",
-            "label": "Redis · memória",
-            "kind": "db",
-            "col": 2,
-            "row": 1
-          },
-          {
-            "id": "supa",
-            "label": "Supabase",
-            "kind": "db",
-            "col": 2,
-            "row": 2
-          },
-          {
-            "id": "cal",
-            "label": "Agenda",
-            "kind": "external",
+            "id": "llm",
+            "label": "Gemini · OpenAI",
+            "kind": "ai",
             "col": 3,
             "row": 0
           },
           {
-            "id": "contract",
-            "label": "Contrato",
-            "kind": "external",
+            "id": "pg",
+            "label": "Supabase Postgres",
+            "kind": "db",
+            "col": 3,
+            "row": 1
+          },
+          {
+            "id": "storage",
+            "label": "Storage (PDFs)",
+            "kind": "db",
             "col": 3,
             "row": 2
           }
         ],
         "edges": [
           {
-            "from": "lead",
-            "to": "n8n",
-            "label": "msg"
+            "from": "cliente",
+            "to": "evo",
+            "label": "mensagem"
           },
           {
-            "from": "n8n",
-            "to": "llm"
+            "from": "evo",
+            "to": "api",
+            "label": "webhook"
           },
           {
-            "from": "n8n",
-            "to": "redis"
+            "from": "api",
+            "to": "queue",
+            "label": "debounce 7s"
           },
           {
-            "from": "n8n",
-            "to": "supa"
+            "from": "queue",
+            "to": "llm",
+            "label": "triagem"
           },
           {
-            "from": "llm",
-            "to": "cal"
+            "from": "team",
+            "to": "web"
           },
           {
-            "from": "supa",
-            "to": "contract"
+            "from": "web",
+            "to": "api",
+            "label": "REST + WS"
+          },
+          {
+            "from": "api",
+            "to": "pg",
+            "label": "Prisma"
+          },
+          {
+            "from": "api",
+            "to": "storage",
+            "label": "PDF"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "cli-orchestrator",
+      "title": "Orquestrador de CLIs",
+      "category": {
+        "pt": "App desktop · Ferramenta para devs",
+        "en": "Desktop app · Developer tool"
+      },
+      "year": "2026",
+      "kind": "case",
+      "context": {
+        "pt": "Projeto próprio, usado no dia a dia do time da Pronix · ago–out/2026 · 100% autoria",
+        "en": "My own project, used daily by the Pronix team · Aug–Oct 2026 · 100% authorship"
+      },
+      "tagline": {
+        "pt": "Um cockpit para rodar 8+ sessões do Claude Code em paralelo — e saber em 75 ms qual delas precisa de você.",
+        "en": "A cockpit for running 8+ Claude Code sessions in parallel — and knowing within 75 ms which one needs you."
+      },
+      "problem": {
+        "pt": "Rodar várias sessões de agente de código ao mesmo tempo vira caos: terminais escondidos, sessão parada esperando permissão sem ninguém ver e projetos misturados na mesma pasta.",
+        "en": "Running several coding-agent sessions at once turns into chaos: hidden terminals, sessions stuck waiting for permission with nobody noticing, and projects tangled in the same folder."
+      },
+      "solution": {
+        "pt": "Um app Electron com terminais em grade e um painel de atenção: fila de quem está esperando, aprovação de permissão sem entrar no terminal, notificações e cada sessão isolada na própria git worktree. Integrado ao Pronix Flow: um clique na issue abre (ou foca) a sessão já na worktree da branch feature/TECH-N com a descrição da issue pré-preenchida, e o chip da issue no painel leva de volta ao Flow. Inclui diff no app, medidor de uso do Claude, paleta Ctrl+K e auto-update para Windows e macOS.",
+        "en": "An Electron app with grid terminals and an attention panel: a queue of who's waiting, permission approval without entering the terminal, notifications and every session isolated in its own git worktree. Integrated with Pronix Flow: one click on an issue opens (or focuses) the session in the feature/TECH-N worktree with the issue description prefilled, and the issue chip on the pane leads back to Flow. Includes in-app diff, a Claude usage meter, a Ctrl+K palette and auto-update for Windows and macOS."
+      },
+      "role": {
+        "pt": "Autor único: produto, arquitetura, implementação, testes e pipeline de release.",
+        "en": "Sole author: product, architecture, implementation, tests and release pipeline."
+      },
+      "decisions": [
+        {
+          "pt": "Status vem dos hooks do Claude Code (HTTP local), nunca da leitura do texto do terminal — confiável e barato.",
+          "en": "Status comes from Claude Code hooks (local HTTP), never from parsing terminal text — reliable and cheap."
+        },
+        {
+          "pt": "O app não mexe na issue: atribuir e mover é papel do Flow, e o status volta pelo PR via GitHub App. Cada lado tem uma responsabilidade só.",
+          "en": "The app never touches the issue: assigning and moving belong to Flow, and status comes back through the PR via the GitHub App. Each side has a single responsibility."
+        },
+        {
+          "pt": "Sem token compartilhado com o Flow: a segurança vem de host loopback, POST JSON com preflight e allowlist de origem — nada que possa vazar.",
+          "en": "No shared token with Flow: security comes from a loopback host, JSON POST with preflight and an origin allowlist — nothing that can leak."
+        },
+        {
+          "pt": "Atualização troca só o app.asar (4 MB em vez de 142 MB), com rollback automático.",
+          "en": "Updates swap only app.asar (4 MB instead of 142 MB), with automatic rollback."
+        }
+      ],
+      "results": [
+        {
+          "pt": "Pedido de permissão vira alerta na tela em 71–79 ms.",
+          "en": "A permission request becomes an on-screen alert in 71–79 ms."
+        },
+        {
+          "pt": "Da issue no Flow à sessão pronta na branch certa em 5–30 s, sem digitar nada.",
+          "en": "From a Flow issue to a ready session on the right branch in 5–30 s, without typing anything."
+        },
+        {
+          "pt": "0,1% de CPU parado com 8 terminais abertos e ~400 MB de RAM; primeiro terminal em 443 ms.",
+          "en": "0.1% idle CPU with 8 terminals open and ~400 MB of RAM; first terminal in 443 ms."
+        },
+        {
+          "pt": "41 releases publicadas por CI, com atualizações de 4 MB, e 41 testes que controlam o app de fora via CDP.",
+          "en": "41 releases shipped by CI with 4 MB updates, and 41 tests driving the app from the outside via CDP."
+        }
+      ],
+      "metrics": [
+        {
+          "value": "75 ms",
+          "label": {
+            "pt": "até o alerta",
+            "en": "to alert"
+          }
+        },
+        {
+          "value": "0,1%",
+          "label": {
+            "pt": "CPU parado",
+            "en": "idle CPU"
+          }
+        },
+        {
+          "value": "41",
+          "label": {
+            "pt": "releases",
+            "en": "releases"
+          }
+        }
+      ],
+      "stack": [
+        "Electron",
+        "xterm.js",
+        "node-pty",
+        "JavaScript",
+        "Claude Code",
+        "GitHub Actions"
+      ],
+      "highlights": [
+        {
+          "title": {
+            "pt": "Dois canais separados",
+            "en": "Two separate channels"
+          },
+          "description": {
+            "pt": "Bytes do terminal vão por IPC agrupado por quadro; status vai por hooks → HTTP local → estado → UI. Um detector de prompt de permissão independente do texto teve zero falso positivo em 14 capturas.",
+            "en": "Terminal bytes travel over frame-batched IPC; status goes hooks → local HTTP → state → UI. A text-independent permission-prompt detector had zero false positives across 14 captures."
+          }
+        },
+        {
+          "title": {
+            "pt": "Ponte com o Pronix Flow",
+            "en": "Bridge to Pronix Flow"
+          },
+          "description": {
+            "pt": "Recebe a issue por HTTP local ou deeplink (com dedupe quando chegam os dois), resolve o repositório pelos remotes já cadastrados — nunca clona nem aceita caminho de disco —, cria a worktree com a branch literal e abre o Claude com a descrição pré-preenchida.",
+            "en": "Receives the issue via local HTTP or deeplink (deduplicated when both arrive), resolves the repo from already-registered remotes — never cloning or accepting a disk path —, creates the worktree with the literal branch and opens Claude with the description prefilled."
+          }
+        },
+        {
+          "title": {
+            "pt": "Protocolo local seguro",
+            "en": "Secure local protocol"
+          },
+          "description": {
+            "pt": "Proteção contra DNS rebinding, allowlist de origem, preflight PNA do Chrome, limite de ritmo (6 a cada 10 s), fila de 8 e validação de branch com git check-ref-format e mais três portões.",
+            "en": "DNS-rebinding protection, origin allowlist, Chrome PNA preflight, rate limiting (6 per 10 s), a queue of 8 and branch validation with git check-ref-format plus three more gates."
+          }
+        },
+        {
+          "title": {
+            "pt": "Desempenho medido, não estimado",
+            "en": "Performance measured, not guessed"
+          },
+          "description": {
+            "pt": "Orçamento de 8 contextos WebGL, painéis fora da tela só acumulam, animações só com transform/opacity (de 2,39% para 0,02% de CPU) e troca do backend de PTY (CPU sob carga de 26,7% para 13,5%).",
+            "en": "A budget of 8 WebGL contexts, off-screen panes only buffer, animations only on transform/opacity (2.39% → 0.02% CPU) and a PTY backend swap (CPU under load 26.7% → 13.5%)."
+          }
+        },
+        {
+          "title": {
+            "pt": "Distribuição sem assinatura de código",
+            "en": "Shipping without code signing"
+          },
+          "description": {
+            "pt": "Pacote que contorna o Smart App Control do Windows 11 rodando sobre o electron.exe original, com verificação de SHA-256 e update atômico com rollback.",
+            "en": "A package that gets past Windows 11 Smart App Control by running on the original electron.exe, with SHA-256 verification and atomic updates with rollback."
+          }
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2026-08",
+          "label": {
+            "pt": "Primeira versão: grade de terminais + painel de atenção.",
+            "en": "First version: terminal grid + attention panel."
+          }
+        },
+        {
+          "date": "2026-09",
+          "label": {
+            "pt": "Worktrees, diff no app e integração com o Pronix Flow.",
+            "en": "Worktrees, in-app diff and Pronix Flow integration."
+          }
+        },
+        {
+          "date": "2026-10",
+          "label": {
+            "pt": "v0.1.40: medidor de uso, modo mapa e update de 4 MB.",
+            "en": "v0.1.40: usage meter, map mode and 4 MB updates."
+          }
+        }
+      ],
+      "images": [
+        {
+          "src": "/projects/cli-orchestrator.png",
+          "alt": {
+            "pt": "Orquestrador com quatro sessões do Claude Code em grade",
+            "en": "Orchestrator with four Claude Code sessions in a grid"
+          },
+          "caption": {
+            "pt": "Grade de sessões com o painel de atenção",
+            "en": "Session grid with the attention panel"
+          }
+        }
+      ],
+      "cover": "/projects/cli-orchestrator.png",
+      "links": [
+        {
+          "label": {
+            "pt": "Ver código",
+            "en": "View code"
+          },
+          "url": "https://github.com/Rafadegolin/cli-orchestrator"
+        },
+        {
+          "label": {
+            "pt": "Baixar release",
+            "en": "Download release"
+          },
+          "url": "https://github.com/Rafadegolin/cli-orchestrator/releases/latest"
+        }
+      ],
+      "featured": true,
+      "confidential": false,
+      "status": "production",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "claude",
+            "label": "Claude Code hooks",
+            "kind": "ai",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "flow",
+            "label": "Pronix Flow",
+            "kind": "external",
+            "col": 0,
+            "row": 0
+          },
+          {
+            "id": "pty",
+            "label": "node-pty · ConPTY",
+            "kind": "service",
+            "col": 0,
+            "row": 2
+          },
+          {
+            "id": "http",
+            "label": "HTTP local :47615",
+            "kind": "service",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "main",
+            "label": "Electron main",
+            "kind": "service",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "anth",
+            "label": "Uso Anthropic",
+            "kind": "external",
+            "col": 3,
+            "row": 0
+          },
+          {
+            "id": "ui",
+            "label": "xterm.js · WebGL",
+            "kind": "client",
+            "col": 3,
+            "row": 1
+          },
+          {
+            "id": "git",
+            "label": "git worktrees",
+            "kind": "db",
+            "col": 3,
+            "row": 2
+          },
+          {
+            "id": "gh",
+            "label": "GitHub Releases",
+            "kind": "external",
+            "col": 3,
+            "row": 3
+          }
+        ],
+        "edges": [
+          {
+            "from": "claude",
+            "to": "http"
+          },
+          {
+            "from": "flow",
+            "to": "http",
+            "label": "abrir"
+          },
+          {
+            "from": "http",
+            "to": "main"
+          },
+          {
+            "from": "pty",
+            "to": "main",
+            "label": "bytes"
+          },
+          {
+            "from": "main",
+            "to": "anth",
+            "label": "uso"
+          },
+          {
+            "from": "main",
+            "to": "ui",
+            "label": "IPC"
+          },
+          {
+            "from": "main",
+            "to": "git",
+            "label": "branch"
+          },
+          {
+            "from": "main",
+            "to": "gh",
+            "label": "update"
           }
         ]
       }
@@ -394,34 +1688,42 @@
       "slug": "miu-controle",
       "title": "Miu Controle",
       "category": {
-        "pt": "Produto pessoal · Web + Mobile",
-        "en": "Side product · Web + Mobile"
+        "pt": "Produto próprio · Full Stack + IA",
+        "en": "Own product · Full Stack + AI"
       },
       "year": "2025",
       "tagline": {
-        "pt": "Finanças pessoais sem fricção: registrar um gasto leva menos de 5 segundos, e a IA prevê o resto do mês.",
-        "en": "Frictionless personal finance: logging an expense takes under 5 seconds, and AI forecasts the rest of the month."
+        "pt": "Finanças pessoais sem fricção: registre um gasto em menos de 5 segundos — pelo WhatsApp, por foto ou por extrato — e deixe a IA organizar.",
+        "en": "Frictionless personal finance: log an expense in under 5 seconds — via WhatsApp, a photo or a bank statement — and let AI organize it."
       },
       "problem": {
-        "pt": "Apps de finanças são abandonados porque registrar cada gasto dá trabalho demais.",
-        "en": "Finance apps get abandoned because logging every expense is too much work."
+        "pt": "A maioria das pessoas desiste de controlar as finanças porque registrar cada gasto é lento e chato.",
+        "en": "Most people give up on tracking their finances because logging every expense is slow and tedious."
       },
       "solution": {
-        "pt": "Backend NestJS com cache em Redis e um modelo preditivo de gastos, servindo um app mobile e uma versão web. O fluxo de registro foi desenhado para caber em um toque.",
-        "en": "A NestJS backend with Redis caching and a predictive spending model, serving a mobile app and a web version. The logging flow was designed to fit in a single tap."
+        "pt": "Uma API em NestJS e um PWA em Next.js com captura por vários canais (WhatsApp, OCR de comprovante, importação OFX/CSV, recorrências), IA para categorizar e detectar anomalias, previsões de fluxo de caixa, simulador \"e se\", health score financeiro e gamificação.",
+        "en": "A NestJS API and a Next.js PWA with multi-channel capture (WhatsApp, receipt OCR, OFX/CSV import, recurring entries), AI to categorize and flag anomalies, cash-flow forecasts, a \"what if\" simulator, a financial health score and gamification."
       },
       "role": {
-        "pt": "Produto inteiro: backend, frontend, modelagem de dados e deploy.",
-        "en": "The whole product: backend, frontend, data modeling and deployment."
+        "pt": "Produto inteiro, sozinho: modelagem, backend, frontend, IA, infraestrutura e deploy.",
+        "en": "The whole product, solo: data modeling, backend, frontend, AI, infrastructure and deployment."
       },
       "results": [
         {
-          "pt": "Latência das rotas mais usadas reduzida em 93% com cache em Redis.",
-          "en": "93% lower latency on the busiest routes thanks to Redis caching."
+          "pt": "Resposta das rotas mais usadas de ~150 ms para ~10 ms (−93%) com cache Redis.",
+          "en": "Busiest routes went from ~150 ms to ~10 ms (−93%) with Redis caching."
         },
         {
-          "pt": "Registro de um gasto em menos de 5 segundos.",
+          "pt": "Um gasto registrado em menos de 5 segundos.",
           "en": "An expense is logged in under 5 seconds."
+        },
+        {
+          "pt": "Categorização por IA a ~US$ 0,15 por 1.000 transações.",
+          "en": "AI categorization at ~US$0.15 per 1,000 transactions."
+        },
+        {
+          "pt": "179 operações REST documentadas, 43 modelos e 43 arquivos de teste — no ar em miucontrole.com.br.",
+          "en": "179 documented REST operations, 43 models and 43 test files — live at miucontrole.com.br."
         }
       ],
       "metrics": [
@@ -438,15 +1740,27 @@
             "pt": "para registrar um gasto",
             "en": "to log an expense"
           }
+        },
+        {
+          "value": "179",
+          "label": {
+            "pt": "operações REST",
+            "en": "REST operations"
+          }
         }
       ],
       "stack": [
         "NestJS",
-        "Redis",
+        "Next.js",
         "PostgreSQL",
-        "React",
-        "React Native",
-        "IA preditiva"
+        "Prisma",
+        "Redis",
+        "Socket.IO",
+        "OpenAI",
+        "Gemini",
+        "WhatsApp",
+        "Docker",
+        "Vercel"
       ],
       "images": [
         {
@@ -458,6 +1772,13 @@
         }
       ],
       "links": [
+        {
+          "label": {
+            "pt": "Ver ao vivo",
+            "en": "See it live"
+          },
+          "url": "https://www.miucontrole.com.br"
+        },
         {
           "label": {
             "pt": "Código do backend",
@@ -475,60 +1796,80 @@
       ],
       "featured": true,
       "confidential": false,
-      "status": "side",
+      "status": "production",
       "architecture": {
         "nodes": [
           {
-            "id": "mobile",
-            "label": "App mobile",
-            "kind": "client",
+            "id": "wa",
+            "label": "WhatsApp",
+            "kind": "external",
             "col": 0,
             "row": 0
           },
           {
-            "id": "web",
-            "label": "Web",
+            "id": "pwa",
+            "label": "PWA Next.js",
             "kind": "client",
             "col": 0,
             "row": 1
           },
           {
+            "id": "evo",
+            "label": "EvolutionAPI",
+            "kind": "external",
+            "col": 1,
+            "row": 0
+          },
+          {
             "id": "api",
             "label": "NestJS API",
             "kind": "service",
-            "col": 1,
-            "row": 0
+            "col": 2,
+            "row": 1
           },
           {
             "id": "redis",
             "label": "Redis · cache",
             "kind": "db",
-            "col": 2,
+            "col": 3,
             "row": 0
           },
           {
             "id": "pg",
             "label": "PostgreSQL",
             "kind": "db",
-            "col": 2,
+            "col": 3,
             "row": 1
           },
           {
-            "id": "ai",
-            "label": "IA preditiva",
-            "kind": "ai",
+            "id": "minio",
+            "label": "MinIO",
+            "kind": "db",
             "col": 3,
+            "row": 2
+          },
+          {
+            "id": "ai",
+            "label": "OpenAI + Gemini",
+            "kind": "ai",
+            "col": 4,
             "row": 0
           }
         ],
         "edges": [
           {
-            "from": "mobile",
-            "to": "api"
+            "from": "wa",
+            "to": "evo"
           },
           {
-            "from": "web",
-            "to": "api"
+            "from": "evo",
+            "to": "api",
+            "label": "webhook"
+          },
+          {
+            "from": "pwa",
+            "to": "api",
+            "label": "REST + WS"
           },
           {
             "from": "api",
@@ -537,11 +1878,626 @@
           },
           {
             "from": "api",
-            "to": "pg"
+            "to": "pg",
+            "label": "Prisma"
           },
           {
             "from": "api",
-            "to": "ai"
+            "to": "minio",
+            "label": "comprovantes"
+          },
+          {
+            "from": "api",
+            "to": "ai",
+            "label": "categoriza + OCR"
+          }
+        ]
+      },
+      "kind": "case",
+      "context": {
+        "pt": "Produto próprio (miucontrole.com.br) · nov/2025 → jul/2026 · autor único, front e back",
+        "en": "My own product (miucontrole.com.br) · Nov 2025 → Jul 2026 · sole author, front and back"
+      },
+      "decisions": [
+        {
+          "pt": "Previsões por estatística (média móvel ponderada, sazonalidade e intervalo de confiança), sem custo de LLM; IA só onde ela ganha (categorizar e ler comprovante).",
+          "en": "Forecasts via statistics (weighted moving average, seasonality and confidence intervals), at zero LLM cost; AI only where it wins (categorizing and reading receipts)."
+        },
+        {
+          "pt": "Contrato front ↔ back gerado do OpenAPI: o frontend quebra no build, não em produção.",
+          "en": "Front ↔ back contract generated from OpenAPI: the frontend breaks at build time, not in production."
+        },
+        {
+          "pt": "Chave de IA do próprio usuário criptografada em AES-256-GCM, com cota de tokens por plano.",
+          "en": "Users' own AI keys encrypted with AES-256-GCM, with per-plan token quotas."
+        }
+      ],
+      "highlights": [
+        {
+          "title": {
+            "pt": "Captura por qualquer canal",
+            "en": "Capture from any channel"
+          },
+          "description": {
+            "pt": "WhatsApp (EvolutionAPI com webhook validado), OCR de comprovante, importação OFX/CSV e recorrências — tudo vira transação com origem rastreada.",
+            "en": "WhatsApp (EvolutionAPI with a validated webhook), receipt OCR, OFX/CSV import and recurring entries — everything becomes a transaction with tracked origin."
+          }
+        },
+        {
+          "title": {
+            "pt": "IA com dois provedores",
+            "en": "AI with two providers"
+          },
+          "description": {
+            "pt": "OpenAI e Gemini, categorização que aprende com as correções do usuário e job agendado de detecção de anomalias.",
+            "en": "OpenAI and Gemini, categorization that learns from user corrections and a scheduled anomaly-detection job."
+          }
+        },
+        {
+          "title": {
+            "pt": "Escrita orientada a eventos",
+            "en": "Event-driven writes"
+          },
+          "description": {
+            "pt": "Validar dono → atualizar saldo → invalidar cache → evento WebSocket → evento de domínio → gamificação (missões, conquistas e health score) desacoplada.",
+            "en": "Validate owner → update balance → invalidate cache → WebSocket event → domain event → decoupled gamification (missions, achievements and health score)."
+          }
+        },
+        {
+          "title": {
+            "pt": "Backend pronto para produção",
+            "en": "Production-grade backend"
+          },
+          "description": {
+            "pt": "~40 módulos, auditoria automática de mutações, rate limit em três faixas, health checks e log de queries lentas.",
+            "en": "~40 modules, automatic mutation auditing, three-tier rate limiting, health checks and slow-query logging."
+          }
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2025-11",
+          "label": {
+            "pt": "Backend NestJS e primeiras features de IA.",
+            "en": "NestJS backend and first AI features."
+          }
+        },
+        {
+          "date": "2025-12",
+          "label": {
+            "pt": "Frontend PWA em Next.js.",
+            "en": "Next.js PWA frontend."
+          }
+        },
+        {
+          "date": "2026-06",
+          "label": {
+            "pt": "API versionada, OCR, OFX/CSV e WhatsApp.",
+            "en": "Versioned API, OCR, OFX/CSV and WhatsApp."
+          }
+        },
+        {
+          "date": "2026-07",
+          "label": {
+            "pt": "Novo frontend ligado de ponta a ponta à API real.",
+            "en": "New frontend wired end to end to the real API."
+          }
+        }
+      ],
+      "cover": "/projects/miu-controle.png"
+    },
+    {
+      "slug": "pronix-flow",
+      "title": "Pronix Flow",
+      "category": {
+        "pt": "Ferramenta interna · Full Stack",
+        "en": "Internal tool · Full Stack"
+      },
+      "year": "2026",
+      "kind": "case",
+      "context": {
+        "pt": "Ferramenta interna do time de dev da VDV Group · jul/2026 → hoje · ~96% dos commits",
+        "en": "Internal tool for VDV Group's dev team · Jul 2026 → now · ~96% of commits"
+      },
+      "tagline": {
+        "pt": "Um Linear auto-hospedado que fecha o ciclo do dev: ticket do Hub vira issue, um clique abre a sessão no Claude e o PR move a issue sozinho.",
+        "en": "A self-hosted Linear that closes the dev loop: a Hub ticket becomes an issue, one click opens the Claude session and the PR moves the issue on its own."
+      },
+      "problem": {
+        "pt": "O time precisava de um gerenciador de tarefas rápido, operado pelo teclado e auto-hospedado, que ligasse branch e PR do GitHub à issue automaticamente (inclusive em repositórios sem acesso de admin) e transformasse tickets do Pronix Hub em issues.",
+        "en": "The team needed a fast, keyboard-driven, self-hosted task manager that automatically linked GitHub branches and PRs to issues (even on repos without admin access) and turned Pronix Hub tickets into issues."
+      },
+      "solution": {
+        "pt": "Issues numeradas por time (TECH-142), interface otimista em tempo real, paleta Ctrl+K, atalhos e desfazer; ciclos semanais com burndown; sub-issues, anexos e relatórios. Em volta disso, o ciclo completo: tickets do Pronix Hub viram issues sozinhos, o botão \"Abrir no Claude\" atribui a issue, move para Em progresso e abre a sessão no Orquestrador de CLIs já na branch feature/TECH-N com a descrição pré-preenchida, e o GitHub App move o status no push e no PR e comenta no PR com o link da issue.",
+        "en": "Team-numbered issues (TECH-142), an optimistic real-time UI, Ctrl+K palette, shortcuts and undo; weekly cycles with burndown; sub-issues, attachments and reports. Around it, the full loop: Pronix Hub tickets become issues automatically, the \"Open in Claude\" button assigns the issue, moves it to In Progress and opens a session in the CLI Orchestrator on the feature/TECH-N branch with the description prefilled, and the GitHub App moves status on push and PR and comments on the PR with the issue link."
+      },
+      "role": {
+        "pt": "Produto, arquitetura (com documento de cada fase) e implementação de ponta a ponta.",
+        "en": "Product, architecture (with a design doc per phase) and end-to-end implementation."
+      },
+      "decisions": [
+        {
+          "pt": "Webhook do GitHub validado por HMAC e processado numa fila idempotente (jobId = id da entrega): reentregas nunca duplicam efeito.",
+          "en": "GitHub webhook validated by HMAC and processed on an idempotent queue (jobId = delivery id): redeliveries never duplicate effects."
+        },
+        {
+          "pt": "Transições só para frente, e a issue só fecha quando todos os PRs que a resolvem foram mergeados.",
+          "en": "Forward-only transitions, and an issue only closes once every PR that resolves it is merged."
+        }
+      ],
+      "results": [
+        {
+          "pt": "Do ticket ao PR sem copiar nada à mão: ticket → issue → sessão do Claude na branch certa → PR que move a issue.",
+          "en": "From ticket to PR without copying anything by hand: ticket → issue → Claude session on the right branch → PR that moves the issue."
+        },
+        {
+          "pt": "Board passou de ~10 chamadas + 2 WebSockets para 1 + 1.",
+          "en": "The board went from ~10 requests + 2 WebSockets to 1 + 1."
+        },
+        {
+          "pt": "58 endpoints, 155 testes unitários e e2e de numeração concorrente e de webhook.",
+          "en": "58 endpoints, 155 unit tests and e2e tests for concurrent numbering and webhooks."
+        }
+      ],
+      "metrics": [
+        {
+          "value": "1 clique",
+          "label": {
+            "pt": "da issue à sessão no Claude",
+            "en": "from issue to Claude session"
+          }
+        },
+        {
+          "value": "1 + 1",
+          "label": {
+            "pt": "requisições do board (antes 10 + 2)",
+            "en": "board requests (was 10 + 2)"
+          }
+        },
+        {
+          "value": "155",
+          "label": {
+            "pt": "testes unitários",
+            "en": "unit tests"
+          }
+        }
+      ],
+      "stack": [
+        "NestJS",
+        "Next.js",
+        "PostgreSQL",
+        "Prisma",
+        "Redis",
+        "BullMQ",
+        "Socket.IO",
+        "TanStack Query",
+        "Turborepo",
+        "Docker"
+      ],
+      "highlights": [
+        {
+          "title": {
+            "pt": "Ciclo de dev de ponta a ponta",
+            "en": "End-to-end dev loop"
+          },
+          "description": {
+            "pt": "Hub → issue (idempotente por id externo, com anexos) → \"Abrir no Claude\" → branch feature/TECH-N → push/PR → GitHub App move o status e comenta no PR. Transições só para frente; Done continua sendo decisão humana.",
+            "en": "Hub → issue (idempotent by external id, with attachments) → \"Open in Claude\" → feature/TECH-N branch → push/PR → GitHub App moves status and comments on the PR. Forward-only transitions; Done stays a human decision."
+          }
+        },
+        {
+          "title": {
+            "pt": "Ponte com um app desktop, pelo navegador",
+            "en": "Bridging to a desktop app, from the browser"
+          },
+          "description": {
+            "pt": "O Flow sonda o Orquestrador local (ping de 1 s); se ele está fechado, abre por deeplink e tenta de novo por 3 s; se não está instalado, copia a branch. O repositório é resolvido pela issue, pelo time ou pelo PR vinculado.",
+            "en": "Flow probes the local Orchestrator (1 s ping); if it's closed, it launches it via deeplink and retries for 3 s; if it isn't installed, it copies the branch. The repository is resolved from the issue, the team or the linked PR."
+          }
+        },
+        {
+          "title": {
+            "pt": "GitHub App em várias contas",
+            "en": "Multi-account GitHub App"
+          },
+          "description": {
+            "pt": "Webhook com HMAC e fila idempotente; lê a chave da issue em qualquer posição do nome da branch e vincula PRs mesmo em repositórios onde o dev não é admin.",
+            "en": "HMAC webhook and idempotent queue; reads the issue key anywhere in the branch name and links PRs even on repos where the developer isn't an admin."
+          }
+        },
+        {
+          "title": {
+            "pt": "UI otimista em tempo real",
+            "en": "Optimistic real-time UI"
+          },
+          "description": {
+            "pt": "Um socket por aba, eventos escritos direto no cache do TanStack Query, presença por issue no Redis, numeração transacional sob concorrência e desfazer.",
+            "en": "One socket per tab, events written straight into the TanStack Query cache, per-issue presence in Redis, transactional numbering under concurrency and undo."
+          }
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2026-07",
+          "label": {
+            "pt": "MVP: issues, board e atalhos.",
+            "en": "MVP: issues, board and shortcuts."
+          }
+        },
+        {
+          "date": "2026-08",
+          "label": {
+            "pt": "GitHub App, ciclos e burndown.",
+            "en": "GitHub App, cycles and burndown."
+          }
+        },
+        {
+          "date": "2026-09",
+          "label": {
+            "pt": "Ponte com o Hub e \"Abrir no Claude\" integrado ao Orquestrador.",
+            "en": "Hub bridge and \"Open in Claude\" wired to the Orchestrator."
+          }
+        }
+      ],
+      "images": [
+        {
+          "src": "/projects/pronix-flow-board.webp",
+          "alt": {
+            "pt": "Board do ciclo no Pronix Flow com issues em Backlog, Todo, In Progress e Done, PRs vinculados e sub-issues",
+            "en": "Pronix Flow cycle board with issues in Backlog, Todo, In Progress and Done, linked PRs and sub-issues"
+          },
+          "caption": {
+            "pt": "Board do ciclo · PRs vinculados e sub-issues",
+            "en": "Cycle board · linked PRs and sub-issues"
+          }
+        }
+      ],
+      "cover": "/projects/pronix-flow-board.webp",
+      "links": [],
+      "featured": false,
+      "confidential": true,
+      "status": "production",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "web",
+            "label": "Next.js (web)",
+            "kind": "client",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "orq",
+            "label": "Orquestrador",
+            "kind": "client",
+            "col": 1,
+            "row": 2
+          },
+          {
+            "id": "hub",
+            "label": "Pronix Hub tickets",
+            "kind": "external",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "gh",
+            "label": "GitHub App",
+            "kind": "external",
+            "col": 2,
+            "row": 2
+          },
+          {
+            "id": "api",
+            "label": "NestJS API",
+            "kind": "service",
+            "col": 3,
+            "row": 1
+          },
+          {
+            "id": "s3",
+            "label": "MinIO (anexos)",
+            "kind": "db",
+            "col": 4,
+            "row": 0
+          },
+          {
+            "id": "queue",
+            "label": "Redis · BullMQ",
+            "kind": "queue",
+            "col": 4,
+            "row": 2
+          },
+          {
+            "id": "pg",
+            "label": "PostgreSQL",
+            "kind": "db",
+            "col": 5,
+            "row": 1
+          },
+          {
+            "id": "worker",
+            "label": "Worker (status)",
+            "kind": "service",
+            "col": 5,
+            "row": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "web",
+            "to": "orq",
+            "label": "abrir"
+          },
+          {
+            "from": "orq",
+            "to": "gh",
+            "label": "PR"
+          },
+          {
+            "from": "hub",
+            "to": "api"
+          },
+          {
+            "from": "gh",
+            "to": "api"
+          },
+          {
+            "from": "web",
+            "to": "api"
+          },
+          {
+            "from": "api",
+            "to": "s3"
+          },
+          {
+            "from": "api",
+            "to": "queue"
+          },
+          {
+            "from": "queue",
+            "to": "worker"
+          },
+          {
+            "from": "worker",
+            "to": "pg"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "garagem",
+      "title": "Garagem",
+      "category": {
+        "pt": "Produto próprio · Mobile + IA",
+        "en": "Own product · Mobile + AI"
+      },
+      "year": "2026",
+      "kind": "case",
+      "context": {
+        "pt": "Produto próprio · mai–jul/2026 · autor único, do spec e design system ao código",
+        "en": "My own product · May–Jul 2026 · sole author, from spec and design system to code"
+      },
+      "tagline": {
+        "pt": "Gestão do carro pelo celular: fotografe a nota da oficina e a IA preenche a manutenção sozinha.",
+        "en": "Car management on your phone: snap the repair-shop receipt and AI fills in the maintenance record."
+      },
+      "problem": {
+        "pt": "Donos de carro e moto não conseguem acompanhar num lugar só manutenção, documentos, gastos e prazos — os apps que existem são datados, caros ou viram planilha.",
+        "en": "Car and motorcycle owners can't track maintenance, documents, costs and deadlines in one place — existing apps are dated, pricey or end up as spreadsheets."
+      },
+      "solution": {
+        "pt": "Um app mobile em Expo com API NestJS e worker de filas: o veículo é cadastrado pela tabela FIPE, abastecimentos e manutenções entram à mão ou por foto da nota (OCR com Claude Vision), e tudo aparece numa timeline de passado e futuro com insights automáticos de consumo e gasto.",
+        "en": "An Expo mobile app with a NestJS API and a queue worker: vehicles are registered via the FIPE price table, fuel and maintenance are entered by hand or by photographing the receipt (OCR with Claude Vision), and everything shows up on a past-and-future timeline with automatic fuel and spending insights."
+      },
+      "role": {
+        "pt": "Autor único: spec de produto, design system, protótipos, backend, worker e app mobile.",
+        "en": "Sole author: product spec, design system, prototypes, backend, worker and mobile app."
+      },
+      "decisions": [
+        {
+          "pt": "OCR assíncrono: a foto sobe direto para o R2 por URL pré-assinada e o worker processa — a API nunca segura a requisição.",
+          "en": "Asynchronous OCR: the photo goes straight to R2 via a presigned URL and the worker processes it — the API never holds the request."
+        },
+        {
+          "pt": "Insights por regras puras, sem LLM: custo zero, previsível e testável.",
+          "en": "Insights from pure rules, no LLM: zero cost, predictable and testable."
+        },
+        {
+          "pt": "Os mesmos schemas Zod validam no app e na API.",
+          "en": "The same Zod schemas validate on the app and the API."
+        }
+      ],
+      "results": [
+        {
+          "pt": "Dashboard em 115 ms (frio) e 54 ms (com cache).",
+          "en": "Dashboard in 115 ms (cold) and 54 ms (cached)."
+        },
+        {
+          "pt": "Loop central do produto fechado de ponta a ponta: foto → OCR → revisão → timeline.",
+          "en": "Core product loop closed end to end: photo → OCR → review → timeline."
+        },
+        {
+          "pt": "Sem as chaves externas, OCR e storage degradam com elegância em vez de derrubar o app.",
+          "en": "Without external keys, OCR and storage degrade gracefully instead of crashing the app."
+        }
+      ],
+      "metrics": [
+        {
+          "value": "54 ms",
+          "label": {
+            "pt": "dashboard com cache",
+            "en": "cached dashboard"
+          }
+        },
+        {
+          "value": "7",
+          "label": {
+            "pt": "filas de processamento",
+            "en": "processing queues"
+          }
+        }
+      ],
+      "stack": [
+        "Expo",
+        "React Native",
+        "NestJS",
+        "PostgreSQL",
+        "Prisma",
+        "Redis",
+        "BullMQ",
+        "Claude",
+        "Cloudflare R2",
+        "Turborepo",
+        "Zod"
+      ],
+      "highlights": [
+        {
+          "title": {
+            "pt": "OCR com confiança por campo",
+            "en": "OCR with per-field confidence"
+          },
+          "description": {
+            "pt": "Claude Vision com prompt caching, resposta validada em Zod e confiança por campo e por item — o usuário revisa só o que a IA não teve certeza.",
+            "en": "Claude Vision with prompt caching, Zod-validated output and per-field, per-item confidence — users only review what the AI wasn't sure about."
+          }
+        },
+        {
+          "title": {
+            "pt": "Timeline unificada",
+            "en": "Unified timeline"
+          },
+          "description": {
+            "pt": "4 consultas em paralelo + merge k-way em memória, paginação por cursor e cache de 5 minutos.",
+            "en": "4 parallel queries + in-memory k-way merge, cursor pagination and a 5-minute cache."
+          }
+        },
+        {
+          "title": {
+            "pt": "Monorepo com tipos de ponta a ponta",
+            "en": "End-to-end typed monorepo"
+          },
+          "description": {
+            "pt": "Turborepo com API, worker, app e pacotes compartilhados de domínio e banco.",
+            "en": "Turborepo with API, worker, app and shared domain and database packages."
+          }
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2026-05",
+          "label": {
+            "pt": "Spec de produto, design system e protótipos.",
+            "en": "Product spec, design system and prototypes."
+          }
+        },
+        {
+          "date": "2026-07",
+          "label": {
+            "pt": "Loop central (FIPE → OCR → timeline) validado de ponta a ponta.",
+            "en": "Core loop (FIPE → OCR → timeline) validated end to end."
+          }
+        }
+      ],
+      "images": [],
+      "cover": "",
+      "links": [],
+      "featured": false,
+      "confidential": false,
+      "status": "side",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "mobile",
+            "label": "App Expo",
+            "kind": "client",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "r2",
+            "label": "Cloudflare R2",
+            "kind": "external",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "api",
+            "label": "NestJS API",
+            "kind": "service",
+            "col": 1,
+            "row": 1
+          },
+          {
+            "id": "fipe",
+            "label": "API FIPE",
+            "kind": "external",
+            "col": 1,
+            "row": 2
+          },
+          {
+            "id": "queue",
+            "label": "BullMQ",
+            "kind": "queue",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "worker",
+            "label": "Worker",
+            "kind": "service",
+            "col": 3,
+            "row": 1
+          },
+          {
+            "id": "claude",
+            "label": "Claude Vision",
+            "kind": "ai",
+            "col": 4,
+            "row": 0
+          },
+          {
+            "id": "pg",
+            "label": "PostgreSQL",
+            "kind": "db",
+            "col": 4,
+            "row": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "mobile",
+            "to": "r2",
+            "label": "upload direto"
+          },
+          {
+            "from": "mobile",
+            "to": "api",
+            "label": "REST"
+          },
+          {
+            "from": "api",
+            "to": "fipe",
+            "label": "cache 30d"
+          },
+          {
+            "from": "api",
+            "to": "queue",
+            "label": "jobs"
+          },
+          {
+            "from": "queue",
+            "to": "worker"
+          },
+          {
+            "from": "worker",
+            "to": "claude",
+            "label": "OCR"
+          },
+          {
+            "from": "worker",
+            "to": "pg",
+            "label": "insights"
           }
         ]
       }
@@ -555,28 +2511,48 @@
       },
       "year": "2025",
       "tagline": {
-        "pt": "Duas extensões de VS Code: uma que entende a arquitetura do projeto e outra que liga issues do GitHub ao código.",
-        "en": "Two VS Code extensions: one that understands a project's architecture and one that links GitHub issues to code."
+        "pt": "Extensões de VS Code com IA: relatório de arquitetura de qualquer projeto e commits padronizados num clique — 54 instalações, nota 5,0.",
+        "en": "AI-powered VS Code extensions: an architecture report for any project and standardized commits in one click — 54 installs, 5.0 rating."
       },
       "problem": {
-        "pt": "Entrar em um código desconhecido e encontrar onde uma issue precisa ser resolvida consome horas de leitura.",
-        "en": "Getting into an unfamiliar codebase and finding where an issue needs fixing eats hours of reading."
+        "pt": "Entrar num código desconhecido e entender arquitetura, stack e riscos consome horas de leitura — e escrever boas mensagens de commit é um esforço que ninguém quer fazer.",
+        "en": "Getting into an unfamiliar codebase and understanding its architecture, stack and risks takes hours of reading — and writing good commit messages is effort nobody wants to spend."
       },
       "solution": {
-        "pt": "Project Architect lê a AST do projeto e usa IA para explicar a estrutura. GitIssue Bridge traz as issues para dentro do editor e aponta os arquivos relacionados.",
-        "en": "Project Architect parses the project's AST and uses AI to explain its structure. GitIssue Bridge brings issues into the editor and points to the related files."
+        "pt": "Project Architect AI varre o workspace, monta um contexto dentro de um orçamento de tokens e gera com GPT-4o um relatório (resumo ou análise técnica com segurança, SOLID e sugestões de antes e depois) em PT ou EN; o Smart Commit gera Conventional Commits a partir do diff. GitIssue Bridge, o experimento irmão, traz issues e milestones do GitHub para dentro do editor.",
+        "en": "Project Architect AI scans the workspace, builds context within a token budget and uses GPT-4o to produce a report (summary or deep technical analysis covering security, SOLID and before/after suggestions) in PT or EN; Smart Commit writes Conventional Commits from the diff. GitIssue Bridge, its sibling experiment, brings GitHub issues and milestones into the editor."
       },
       "role": {
-        "pt": "Projeto pessoal, do zero à publicação.",
-        "en": "Personal project, from scratch to release."
+        "pt": "Projeto pessoal, do zero à publicação no Marketplace.",
+        "en": "Personal project, from scratch to Marketplace release."
       },
-      "results": [],
+      "results": [
+        {
+          "pt": "Publicada no VS Code Marketplace: 54 instalações, 297 downloads e nota 5,0.",
+          "en": "Published on the VS Code Marketplace: 54 installs, 297 downloads and a 5.0 rating."
+        },
+        {
+          "pt": "Feita em 4 dias, com 5 atualizações publicadas.",
+          "en": "Built in 4 days, with 5 published updates."
+        },
+        {
+          "pt": "Suporta TS/JS, Python, Java, Go, Rust, C/C++ e até Arduino/PlatformIO.",
+          "en": "Supports TS/JS, Python, Java, Go, Rust, C/C++ and even Arduino/PlatformIO."
+        }
+      ],
       "metrics": [
         {
-          "value": "2",
+          "value": "54",
           "label": {
-            "pt": "extensões",
-            "en": "extensions"
+            "pt": "instalações",
+            "en": "installs"
+          }
+        },
+        {
+          "value": "5,0/5",
+          "label": {
+            "pt": "nota no Marketplace",
+            "en": "Marketplace rating"
           }
         }
       ],
@@ -584,14 +2560,22 @@
         "TypeScript",
         "VS Code API",
         "OpenAI",
-        "AST"
+        "Octokit",
+        "Jest"
       ],
       "images": [],
       "links": [
         {
           "label": {
-            "pt": "Project Architect",
-            "en": "Project Architect"
+            "pt": "Ver no Marketplace",
+            "en": "View on Marketplace"
+          },
+          "url": "https://marketplace.visualstudio.com/items?itemName=RafaelDegolindaSilva.project-architect-ai"
+        },
+        {
+          "label": {
+            "pt": "Project Architect AI",
+            "en": "Project Architect AI"
           },
           "url": "https://github.com/Rafadegolin/project-architect-ai"
         },
@@ -623,25 +2607,32 @@
             "row": 1
           },
           {
-            "id": "ast",
-            "label": "Parser AST",
+            "id": "ctx",
+            "label": "Contexto (orçamento de tokens)",
             "kind": "service",
             "col": 2,
             "row": 0
           },
           {
-            "id": "ai",
-            "label": "OpenAI",
-            "kind": "ai",
+            "id": "git",
+            "label": "git diff",
+            "kind": "service",
             "col": 2,
             "row": 1
           },
           {
             "id": "gh",
-            "label": "GitHub Issues",
+            "label": "GitHub API",
             "kind": "external",
             "col": 2,
             "row": 2
+          },
+          {
+            "id": "ai",
+            "label": "GPT-4o",
+            "kind": "ai",
+            "col": 3,
+            "row": 0
           }
         ],
         "edges": [
@@ -651,18 +2642,89 @@
           },
           {
             "from": "ext",
-            "to": "ast"
+            "to": "ctx",
+            "label": "relatório"
           },
           {
             "from": "ext",
+            "to": "git",
+            "label": "Smart Commit"
+          },
+          {
+            "from": "ext",
+            "to": "gh",
+            "label": "issues"
+          },
+          {
+            "from": "ctx",
             "to": "ai"
-          },
-          {
-            "from": "ext",
-            "to": "gh"
           }
         ]
-      }
+      },
+      "kind": "case",
+      "context": {
+        "pt": "Projeto pessoal · dez/2025 · publicado no VS Code Marketplace",
+        "en": "Personal project · Dec 2025 · published on the VS Code Marketplace"
+      },
+      "decisions": [
+        {
+          "pt": "Contexto com orçamento: prioriza arquivos de configuração e de modelo, amostra e trunca o resto para caber no modelo.",
+          "en": "Budgeted context: prioritizes config and model files, samples and truncates the rest to fit the model."
+        },
+        {
+          "pt": "Segurança desde o início no GitIssue Bridge: autenticação nativa do VS Code, Workspace Trust e Secret Storage.",
+          "en": "Security from day one in GitIssue Bridge: native VS Code auth, Workspace Trust and Secret Storage."
+        }
+      ],
+      "highlights": [
+        {
+          "title": {
+            "pt": "Produto publicado, com usuários reais",
+            "en": "A shipped product with real users"
+          },
+          "description": {
+            "pt": "Do primeiro commit ao Marketplace em 4 dias, com avaliações 5 estrelas.",
+            "en": "From first commit to the Marketplace in 4 days, with 5-star reviews."
+          }
+        },
+        {
+          "title": {
+            "pt": "Prompts estruturados em dois idiomas",
+            "en": "Structured prompts in two languages"
+          },
+          "description": {
+            "pt": "4 modos (resumo ou técnico × PT ou EN) com saída em Markdown: segurança priorizada, antes e depois e próximos passos.",
+            "en": "4 modes (summary or technical × PT or EN) with Markdown output: prioritized security, before/after and next steps."
+          }
+        },
+        {
+          "title": {
+            "pt": "Integração com o Git",
+            "en": "Git integration"
+          },
+          "description": {
+            "pt": "Smart Commit lê o diff staged (ou o unstaged, como fallback) e insere a mensagem direto no Source Control.",
+            "en": "Smart Commit reads the staged diff (falling back to unstaged) and drops the message straight into Source Control."
+          }
+        }
+      ],
+      "timeline": [
+        {
+          "date": "2025-12",
+          "label": {
+            "pt": "Project Architect AI publicado no Marketplace.",
+            "en": "Project Architect AI published on the Marketplace."
+          }
+        },
+        {
+          "date": "2025-12",
+          "label": {
+            "pt": "GitIssue Bridge: fundação com auth do GitHub e testes.",
+            "en": "GitIssue Bridge: foundation with GitHub auth and tests."
+          }
+        }
+      ],
+      "cover": ""
     },
     {
       "slug": "fala-facilitada",
@@ -741,6 +2803,195 @@
             "from": "app",
             "to": "store",
             "label": "offline"
+          }
+        ]
+      },
+      "kind": "case"
+    },
+    {
+      "slug": "craftoffice",
+      "title": "CraftOffice",
+      "category": {
+        "pt": "Lab · Mod de Minecraft + WebRTC",
+        "en": "Lab · Minecraft mod + WebRTC"
+      },
+      "year": "2026",
+      "kind": "lab",
+      "context": {
+        "pt": "Projeto por diversão · out/2026 · open source (MIT)",
+        "en": "Just-for-fun project · Oct 2026 · open source (MIT)"
+      },
+      "tagline": {
+        "pt": "Um escritório virtual dentro do Minecraft: chegue perto de alguém e a câmera e o microfone abrem.",
+        "en": "A virtual office inside Minecraft: walk up to someone and the camera and mic turn on."
+      },
+      "problem": {
+        "pt": "O Gather acabou com o plano gratuito e tirou os mapas próprios. A pergunta: e se o escritório virtual fosse o mapa que o próprio time constrói?",
+        "en": "Gather dropped its free plan and removed custom maps. The question: what if the virtual office were a map the team builds itself?"
+      },
+      "solution": {
+        "pt": "Um mod Fabric com vídeo e voz por proximidade via WebRTC P2P: webcam acima da cabeça de cada jogador, grade de vídeos na HUD, salas trancáveis com \"bater na porta\", status (ocupado, foco…) e um bloco-palco que transmite para a sala inteira. O servidor do jogo só faz a sinalização.",
+        "en": "A Fabric mod with proximity video and voice over P2P WebRTC: a webcam above each player's head, a video grid on the HUD, lockable rooms with \"knock to enter\", status (busy, focus…) and a stage block that broadcasts to the whole room. The game server only handles signaling."
+      },
+      "role": {
+        "pt": "Autor único.",
+        "en": "Sole author."
+      },
+      "decisions": [
+        {
+          "pt": "Prova de conceito com critério de aprovação antes de tudo: embarcar WebRTC nativo num mod era o maior risco.",
+          "en": "Proof of concept with pass criteria first: embedding native WebRTC in a mod was the biggest risk."
+        },
+        {
+          "pt": "Motor de proximidade puro, sem tipos do Minecraft, para ser testável.",
+          "en": "A pure proximity engine with no Minecraft types, so it can be tested."
+        }
+      ],
+      "results": [
+        {
+          "pt": "Vídeo a ~20 fps em 320×240 nos dois sentidos, com conexão em menos de 1 s.",
+          "en": "~20 fps video at 320×240 both ways, connecting in under 1 s."
+        },
+        {
+          "pt": "Upload do frame para a GPU em 78 µs — menos de 1% de um quadro a 60 fps.",
+          "en": "Frame upload to the GPU in 78 µs — under 1% of a 60 fps frame."
+        },
+        {
+          "pt": "20 testes do motor de proximidade (histerese, vizinhos mais próximos, troca de dimensão).",
+          "en": "20 proximity-engine tests (hysteresis, nearest neighbors, dimension changes)."
+        }
+      ],
+      "metrics": [
+        {
+          "value": "~20 fps",
+          "label": {
+            "pt": "vídeo P2P",
+            "en": "P2P video"
+          }
+        },
+        {
+          "value": "78 µs",
+          "label": {
+            "pt": "upload do frame",
+            "en": "frame upload"
+          }
+        }
+      ],
+      "stack": [
+        "Java",
+        "Fabric",
+        "WebRTC",
+        "JUnit",
+        "GitHub Actions"
+      ],
+      "highlights": [
+        {
+          "title": {
+            "pt": "WebRTC nativo dentro de um mod",
+            "en": "Native WebRTC inside a mod"
+          },
+          "description": {
+            "pt": "webrtc-java embarcado num mod Fabric, com mídia e código nativo só no cliente para o servidor dedicado nunca carregá-los.",
+            "en": "webrtc-java embedded in a Fabric mod, with media and native code client-only so the dedicated server never loads them."
+          }
+        },
+        {
+          "title": {
+            "pt": "Pipeline de áudio próprio",
+            "en": "Custom audio pipeline"
+          },
+          "description": {
+            "pt": "Mixer em 48 kHz com ganho por distância e cancelamento de eco usando a mixagem como referência.",
+            "en": "A 48 kHz mixer with distance-based gain and echo cancellation using the mix as reference."
+          }
+        },
+        {
+          "title": {
+            "pt": "Proximidade com histerese",
+            "en": "Proximity with hysteresis"
+          },
+          "description": {
+            "pt": "Conecta a 6 blocos e desconecta a 8, com \"sala vence distância\" e limite de 4 vídeos para os vizinhos mais próximos.",
+            "en": "Connects at 6 blocks and disconnects at 8, with \"room beats distance\" and a 4-video cap for the nearest neighbors."
+          }
+        }
+      ],
+      "timeline": [],
+      "images": [],
+      "cover": "",
+      "links": [
+        {
+          "label": {
+            "pt": "Ver código",
+            "en": "View code"
+          },
+          "url": "https://github.com/Rafadegolin/CraftOffice"
+        }
+      ],
+      "featured": false,
+      "confidential": false,
+      "status": "side",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "a",
+            "label": "Jogador A",
+            "kind": "client",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "server",
+            "label": "Servidor Fabric",
+            "kind": "service",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "prox",
+            "label": "Motor de proximidade",
+            "kind": "service",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "rtc",
+            "label": "WebRTC P2P",
+            "kind": "external",
+            "col": 2,
+            "row": 2
+          },
+          {
+            "id": "b",
+            "label": "Jogador B",
+            "kind": "client",
+            "col": 3,
+            "row": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "a",
+            "to": "server",
+            "label": "sinalização"
+          },
+          {
+            "from": "server",
+            "to": "prox"
+          },
+          {
+            "from": "prox",
+            "to": "b",
+            "label": "conecta"
+          },
+          {
+            "from": "a",
+            "to": "rtc",
+            "label": "áudio + vídeo"
+          },
+          {
+            "from": "rtc",
+            "to": "b"
           }
         ]
       }
@@ -940,8 +3191,8 @@
         {
           "name": "Supabase",
           "context": {
-            "pt": "AI SDR Agent",
-            "en": "AI SDR Agent"
+            "pt": "Nobile Stones",
+            "en": "Nobile Stones"
           }
         },
         {
@@ -969,8 +3220,8 @@
         {
           "name": "n8n",
           "context": {
-            "pt": "Contratos, CRM, agente SDR",
-            "en": "Contracts, CRM, SDR agent"
+            "pt": "Contratos, CRM",
+            "en": "Contracts, CRM"
           }
         },
         {

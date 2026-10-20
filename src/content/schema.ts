@@ -93,6 +93,19 @@ export const architectureSchema = z.object({
 
 export const PROJECT_STATUS = ["production", "side", "archived"] as const;
 
+/** "case" aparece em Sistemas; "lab" vai para o bloco de experimentos. */
+export const PROJECT_KINDS = ["case", "lab"] as const;
+
+const highlight = z.object({
+  title: localized,
+  description: localized,
+});
+
+const milestone = z.object({
+  date: z.string(),
+  label: localized,
+});
+
 export const projectSchema = z.object({
   slug: z
     .string()
@@ -108,11 +121,19 @@ export const projectSchema = z.object({
   results: localizedList,
   metrics: z.array(metric),
   stack: z.array(z.string()),
-  images: z.array(z.object({ src: localPath, alt: localized })),
+  images: z.array(z.object({ src: localPath, alt: localized, caption: localized.optional() })),
   links: z.array(link),
   featured: z.boolean(),
   confidential: z.boolean(),
   status: z.enum(PROJECT_STATUS).default("side"),
+  kind: z.enum(PROJECT_KINDS).default("case"),
+  /** Empresa/cliente, período e time — uma linha no topo do case. */
+  context: localized.default({ pt: "", en: "" }),
+  highlights: z.array(highlight).default([]),
+  decisions: localizedList.default([]),
+  timeline: z.array(milestone).default([]),
+  /** Imagem do card na home; vazio = sem capa. */
+  cover: localPath.default(""),
   architecture: architectureSchema.default({ nodes: [], edges: [] }),
 });
 
@@ -183,3 +204,5 @@ export type Architecture = z.infer<typeof architectureSchema>;
 export type ArchNode = Architecture["nodes"][number];
 export type ArchEdge = Architecture["edges"][number];
 export type ProjectStatus = (typeof PROJECT_STATUS)[number];
+export type ProjectKind = (typeof PROJECT_KINDS)[number];
+export type Highlight = z.infer<typeof highlight>;

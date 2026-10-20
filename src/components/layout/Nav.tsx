@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getContent, t, type Locale } from "@/content";
 import { getDictionary, homePath, tldrPath } from "@/content/dictionary";
-import { Container, Led } from "@/components/ui/primitives";
+import { Container } from "@/components/ui/primitives";
 import { Clock } from "@/components/ui/Clock";
 import { MobileMenu } from "./MobileMenu";
 
@@ -19,9 +19,8 @@ export const SECTION_IDS = {
 /** Barra superior fixa. @param altHref mesma página no outro idioma. */
 export function Nav({ locale, altHref }: { locale: Locale; altHref: string }) {
   const d = getDictionary(locale);
-  const { profile, projects } = getContent();
+  const { profile } = getContent();
   const home = homePath(locale);
-  const running = projects.filter((p) => p.status === "production").length;
 
   const items = (
     [
@@ -46,13 +45,6 @@ export function Nav({ locale, altHref }: { locale: Locale; altHref: string }) {
           <span className="text-fg">{profile.shortName}</span>
           <span className="hidden text-subtle 2xl:inline">▸ {t(profile.role, locale)}</span>
         </Link>
-
-        {running > 0 && (
-          <span className="hidden items-center gap-2 whitespace-nowrap font-mono text-[11px] text-accent lg:inline-flex" data-motion>
-            <Led />
-            {d.nav.running(running)}
-          </span>
-        )}
 
         <nav aria-label="Principal" className="ml-auto hidden md:block">
           <ul className="flex items-center gap-5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">

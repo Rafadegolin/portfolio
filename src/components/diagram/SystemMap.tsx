@@ -48,7 +48,7 @@ const chipWidth = (name: string) => 30 + name.length * 6.1;
 export function SystemMap({ locale }: { locale: Locale }) {
   const d = getDictionary(locale);
   const { profile, projects } = getContent();
-  const systems = projects.filter((p) => p.status !== "archived").slice(0, 4);
+  const systems = projects.filter((p) => p.status !== "archived" && p.kind === "case").slice(0, 4);
   if (systems.length === 0) return null;
 
   const initials = profile.shortName
