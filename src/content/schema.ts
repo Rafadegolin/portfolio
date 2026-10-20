@@ -157,13 +157,6 @@ export const skillGroupSchema = z.object({
   ),
 });
 
-export const workLogSchema = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}(-\d{2})?$/, "use AAAA-MM ou AAAA-MM-DD"),
-  title: localized,
-  description: localized,
-  tags: z.array(z.string()),
-});
-
 export const principleSchema = z.object({
   title: localized,
   description: localized,
@@ -182,7 +175,6 @@ export const contentSchema = z.object({
   skillGroups: z.array(skillGroupSchema),
   routine: localizedList,
   principles: z.array(principleSchema),
-  workLog: z.array(workLogSchema),
   education: z.array(educationSchema),
   seo: z.object({
     siteUrl: z.string(),
@@ -196,7 +188,6 @@ export type Profile = z.infer<typeof profileSchema>;
 export type Project = z.infer<typeof projectSchema>;
 export type Experience = z.infer<typeof experienceSchema>;
 export type SkillGroup = z.infer<typeof skillGroupSchema>;
-export type WorkLogEntry = z.infer<typeof workLogSchema>;
 export type Principle = z.infer<typeof principleSchema>;
 export type Education = z.infer<typeof educationSchema>;
 export type Metric = z.infer<typeof metric>;
