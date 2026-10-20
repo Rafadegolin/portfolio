@@ -1,72 +1,53 @@
-<div align="center">
+# Portfolio · Rafael Degolin
 
-# 🚀 Portfolio | Rafael Degolin
+Portfolio pessoal em PT-BR e EN no estilo "sala de controle": os sistemas que construí apresentados como um painel de produção, com diagramas de arquitetura animados, atividade real do GitHub e um modo recrutador de 30 segundos (`/resumo`, `/en/tldr`). Gerado estaticamente, com editor de conteúdo em `/admin`.
 
-### Full Stack Developer
+**[rafadegolin-portfolio.vercel.app](https://rafadegolin-portfolio.vercel.app)**
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Framer Motion](https://img.shields.io/badge/Framer_Motion-Latest-FF0055?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
+## Stack
 
-<br />
+Next.js 16 (App Router, React Compiler) · React 19 · TypeScript · Tailwind CSS v4 · zod
 
-**[🌐 Ver Portfolio →](https://rafadegolin-portfolio.vercel.app)**
+## Como funciona
 
-</div>
+- **Conteúdo:** fica em [`content/portfolio.json`](content/portfolio.json), validado por [`src/content/schema.ts`](src/content/schema.ts). Todo texto tem versão `pt` e `en`.
+- **Build:** todas as páginas públicas são geradas no build (`/`, `/en`, `/projetos/[slug]`, `/en/projects/[slug]`). Não há busca de dados no navegador.
+- **GitHub:** contribuições, sequências e commits recentes vêm da API do GitHub (`src/lib/github.ts`) usando o `GITHUB_TOKEN`, com revalidação a cada 6h. Sem token, esses painéis somem.
+- **Diagramas:** cada projeto tem `status` e `architecture` (blocos e ligações) no JSON, editáveis no admin.
+- **Campos pendentes:** um campo vazio ou que começa com `TODO` não aparece no site. Dá para publicar com conteúdo incompleto.
+- **`/admin`:** é protegido por senha.
+  - Em produção, salvar faz um commit no GitHub com o JSON e as imagens enviadas, e a Vercel publica o novo deploy em cerca de 1 minuto.
+  - Em `npm run dev`, ele grava direto no arquivo local (use `ADMIN_STORE=github` para testar a publicação).
 
----
+```
+content/portfolio.json        conteúdo do site
+src/content/                  schema, helpers de idioma e textos fixos da UI
+src/components/sections/      seções da home
+src/components/admin/         editor do /admin
+src/lib/content-store.ts      leitura e gravação (GitHub ou disco)
+src/lib/auth.ts, src/proxy.ts sessão do /admin
+src/app/(pt) (en) (admin)     root layouts de cada idioma e do admin
+```
 
-## 💻 Sobre o Projeto
-
-Este repositório contém o código fonte do meu portfolio pessoal (ainda em construção).
-
-Mais do que apenas uma vitrine de projetos, utilizei este espaço como um laboratório para aplicar as features mais recentes do ecossistema React. A ideia foi criar uma aplicação estática, mas com a robustez e escalabilidade de um produto real, utilizando **Next.js 15** e a nova configuração do **Tailwind v4**.
-
-### Por que essa stack?
-
-Embora um portfolio pudesse ser feito com tecnologias mais simples, optei por uma abordagem de *over-engineering* consciente para demonstrar domínio técnico em:
-
-* **Next.js 15 (App Router):** Para aproveitar a renderização híbrida e otimização de rotas.
-* **TypeScript:** Tipagem estrita para garantir manutenibilidade e reduzir erros em tempo de execução.
-* **Tailwind CSS v4:** Explorando a nova engine e configuração *CSS-first*.
-* **Framer Motion:** Para criar micro-interações e feedback visual refinado sem comprometer a performance.
-
----
-
-## ✨ Principais Features
-
-* **UI/UX Moderno:** Design system consistente com suporte nativo a Dark Mode.
-* **Animações:** Uso de *Framer Motion* para transições de página, scroll parallax e interações de hover.
-* **Performance:** Otimização de imagens, fontes e code-splitting automático do Next.js.
-* **Responsividade:** Layout fluido que se adapta de mobile a monitores ultrawide.
-* **Canvas API:** Implementação leve de partículas para compor o visual da Hero section.
-
----
-
-## 🛠️ Instalação e Uso
-
-Para rodar o projeto localmente:
+## Rodando localmente
 
 ```bash
-# 1. Clone o repositório
-git clone [https://github.com/Rafadegolin/portfolio-next.git](https://github.com/Rafadegolin/portfolio-next.git)
-
-# 2. Instale as dependências
-cd portfolio-next
 npm install
-
-# 3. Rode o servidor de desenvolvimento
+cp .env.example .env.local   # preencha ADMIN_PASSWORD e ADMIN_SECRET
 npm run dev
+```
 
-📂 Estrutura
-A organização segue o padrão do App Router do Next.js:
+Abra `http://localhost:3000/admin` para editar o conteúdo.
 
-portfolio-next/
-├── app/
-│   ├── components/  # Componentes reutilizáveis (Atomic Design)
-│   ├── hooks/       # Hooks customizados (useScroll, etc)
-│   ├── layout.tsx   # Layout global e providers
-│   └── page.tsx     # Home page
-├── public/          # Assets estáticos
-└── tailwind.config.ts
+## Segurança do /admin
+
+- Senha com no mínimo 16 caracteres, comparada em tempo constante. Tentativas erradas têm atraso e bloqueio por IP (5 em 15 min).
+- Sessão em cookie `httpOnly`, `sameSite=strict`, `__Host-` em produção, válida por 12h e assinada com HMAC junto com a senha: trocar a senha derruba todas as sessões.
+- Server Actions conferem a sessão de novo (não dependem só do `proxy.ts`).
+- Todo link, imagem e CV do conteúdo é validado (bloqueia `javascript:`, `data:`, `//host` e `..`). Conteúdo inválido não passa no save nem no build.
+- Uploads: só em `public/projects`, `public/profile` e `public/cv`, com assinatura binária conferida (WebP, PNG, JPEG, PDF), máx. 5 MB por arquivo e 10 por publicação.
+- Headers: CSP, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`; `/admin` com `no-store` e `noindex`.
+
+## Deploy (Vercel)
+
+Configure as variáveis do `.env.example` no projeto da Vercel. O `GITHUB_TOKEN` deve ser um token fine-grained com permissão **Contents: Read and write**, restrito a este repositório.

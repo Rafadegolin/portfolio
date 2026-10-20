@@ -1,30 +1,41 @@
 @import "tailwindcss";
 
-/* Customizações de tema */
-@theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-fira-code), ui-monospace, monospace;
+/* Tema único: "sala de controle". */
+@theme inline {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --color-bg: #07090a;
+  --color-panel: #0c0f10;
+  --color-raised: #111617;
+  --color-line: #1c2224;
+  --color-line-strong: #2a3335;
+  --color-fg: #e6ebe8;
+  --color-muted: #8b9894;
+  --color-subtle: #56625f;
+  --color-accent: #3ddc84;
+  --color-accent-dim: #1d6b44;
+  --color-amber: #ffb547;
+  --color-flow: #5ec8f2;
+  /* Aliases usados pelo admin. */
+  --color-surface: #0c0f10;
+  --color-accent-fg: #07090a;
 }
 
-/* Base Styles */
 @layer base {
-  body {
-    font-family: var(--font-sans);
-    background-color: #050505;
-    cursor: default;
+  html {
+    color-scheme: dark;
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    -webkit-text-size-adjust: 100%;
   }
 
-  /* `clip` nao cria scroll container (ao contrario de `hidden`), entao nao
-     compete com `position: sticky` nem desativa scroll anchoring. */
-  html,
   body {
     overflow-x: clip;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    body {
-      cursor: none;
-    }
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-feature-settings: "ss01", "cv11";
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -33,65 +44,204 @@
     }
   }
 
+  [id] {
+    scroll-margin-top: 4.5rem;
+  }
+
   ::selection {
-    background-color: rgba(6, 182, 212, 0.3);
-    color: white;
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-accent);
+    outline-offset: 3px;
   }
 
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
+    height: 10px;
   }
-
   ::-webkit-scrollbar-track {
-    background: #0a0a0a;
+    background: var(--color-bg);
   }
-
   ::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 4px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: #06b6d4;
+    background: var(--color-line-strong);
+    border: 3px solid var(--color-bg);
+    border-radius: 999px;
   }
 }
 
-/* Utilities */
+@layer components {
+  /* Grade de fundo bem sutil, sem imagem. */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* Painel com marcas de canto. */
+  .panel {
+    position: relative;
+    border: 1px solid var(--color-line);
+    background-color: color-mix(in oklab, var(--color-panel) 92%, transparent);
+  }
+  .panel::before,
+  .panel::after {
+    content: "";
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    pointer-events: none;
+    border-color: var(--color-muted);
+    border-style: solid;
+  }
+  .panel::before {
+    top: -1px;
+    left: -1px;
+    border-width: 1px 0 0 1px;
+  }
+  .panel::after {
+    right: -1px;
+    bottom: -1px;
+    border-width: 0 1px 1px 0;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
 @layer utilities {
-  .text-stroke {
-    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.1);
-    color: transparent;
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  .glow {
+    text-shadow: 0 0 24px color-mix(in oklab, var(--color-accent) 45%, transparent);
+  }
+}
+
+/* ─── Movimento ──────────────────────────────────────────────────────────────
+   Tudo em CSS. [data-paused] (setado pelo InViewPauser) congela animações de
+   blocos fora da tela; prefers-reduced-motion desliga tudo. */
+
+@keyframes boot {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes led {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ticker {
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .boot {
+    animation: boot 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * 110ms);
   }
 
-  .font-mono {
-    font-family: var(--font-mono);
+  .led-live {
+    animation: led 2.4s ease-in-out infinite;
   }
 
-  /* Grao identico ao feTurbulence original, mas rasterizado UMA vez num tile
-     200x200 e repetido. baseFrequency 0.8 -> periodo 1.25px -> 160 periodos
-     exatos em 200px, entao stitchTiles nao reajusta nada. ~380 bytes, 0 request. */
-  .noise-overlay {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 200px 200px;
+  .caret {
+    animation: caret 1s steps(1) infinite;
   }
 
-  /* Spotlight dirigido por custom properties escritas via ref: o gradiente muda
-     sem passar pelo React. O `transition` do Tailwind nunca animou
-     background-image, entao animar so a opacity e equivalente ao original. */
-  .spotlight {
-    --spot-x: 50%;
-    --spot-y: 50%;
-    --spot-o: 0;
+  .ticker {
+    animation: ticker calc(var(--n, 1) * 3.2s) steps(var(--n, 1)) infinite;
   }
 
-  .spotlight__glow {
-    opacity: var(--spot-o);
-    transition: opacity 300ms ease;
-    background: radial-gradient(
-      600px circle at var(--spot-x) var(--spot-y),
-      rgba(6, 182, 212, 0.15),
-      transparent 40%
-    );
+  .spin-slow {
+    animation: orbit 60s linear infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+
+  [data-paused] .led-live,
+  [data-paused] .caret,
+  [data-paused] .spin-slow,
+  [data-paused] .ticker,
+  [data-paused].led-live {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .packet {
+    display: none;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+@media print {
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .panel::before,
+  .panel::after {
+    display: none;
   }
 }

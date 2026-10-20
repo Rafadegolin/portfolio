@@ -1,0 +1,1131 @@
+{
+  "profile": {
+    "name": "Rafael Degolin da Silva",
+    "shortName": "Rafael Degolin",
+    "role": {
+      "pt": "Desenvolvedor Full Stack",
+      "en": "Full Stack Developer"
+    },
+    "headline": {
+      "pt": "Construo o software que faz a operação rodar.",
+      "en": "I build the software a business actually runs on."
+    },
+    "subheadline": {
+      "pt": "Desenvolvedor Full Stack e Engenheiro da Computação. Na Pronix, transformo processos manuais em sistemas em produção: um ERP interno, integrações com o Mercado Livre e agentes de IA que qualificam leads sozinhos.",
+      "en": "Full Stack Developer and Computer Engineer. At Pronix I turn manual processes into production systems: an internal ERP, Mercado Livre integrations and AI agents that qualify leads on their own."
+    },
+    "availability": {
+      "pt": "Aberto a novas oportunidades",
+      "en": "Open to new opportunities"
+    },
+    "location": {
+      "pt": "Mogi Guaçu, SP · Remoto ou híbrido",
+      "en": "Mogi Guaçu, SP, Brazil · Remote or hybrid"
+    },
+    "email": "rafaeldegolin26@hotmail.com",
+    "links": {
+      "github": "https://github.com/Rafadegolin",
+      "linkedin": "https://www.linkedin.com/in/rafaeldegolin/",
+      "whatsapp": ""
+    },
+    "cv": {
+      "pt": "",
+      "en": ""
+    },
+    "photo": {
+      "src": "/profile/rafael.webp",
+      "alt": {
+        "pt": "Foto de Rafael Degolin",
+        "en": "Photo of Rafael Degolin"
+      }
+    },
+    "stats": [
+      {
+        "value": "4+",
+        "label": {
+          "pt": "anos em tecnologia",
+          "en": "years in tech"
+        }
+      },
+      {
+        "value": "TODO",
+        "label": {
+          "pt": "sistemas em produção",
+          "en": "systems in production"
+        }
+      },
+      {
+        "value": "TODO",
+        "label": {
+          "pt": "horas manuais eliminadas por mês",
+          "en": "manual hours removed per month"
+        }
+      },
+      {
+        "value": "TODO",
+        "label": {
+          "pt": "pessoas usando meus sistemas todo dia",
+          "en": "people using my systems every day"
+        }
+      }
+    ],
+    "about": [
+      {
+        "pt": "Comecei na tecnologia pelo lado de quem testa: quase três anos de QA na Motorola, validando protótipos e apps usados no mundo todo. Foi lá que aprendi a pensar primeiro no que pode quebrar.",
+        "en": "I got into tech from the testing side: almost three years in QA at Motorola, validating prototypes and apps used worldwide. That is where I learned to think about what can break first."
+      },
+      {
+        "pt": "Depois fui para a operação. Implantando ERP e treinando clientes, entendi como uma empresa funciona de verdade e onde ela perde tempo. Hoje junto as duas coisas: escrevo o software que resolve esses gargalos e cuido dele em produção.",
+        "en": "Then I moved into operations. Rolling out an ERP and training clients showed me how a business really works and where it loses time. Today I combine both: I write the software that removes those bottlenecks and I own it in production."
+      },
+      {
+        "pt": "Gosto de problemas com dono e prazo, de código que outra pessoa consegue manter e de automação que devolve horas para o time.",
+        "en": "I like problems with an owner and a deadline, code someone else can maintain, and automation that gives hours back to the team."
+      }
+    ]
+  },
+  "projects": [
+    {
+      "slug": "pronix-hub",
+      "title": "Pronix Hub",
+      "category": {
+        "pt": "ERP interno · Full Stack",
+        "en": "Internal ERP · Full Stack"
+      },
+      "year": "2025",
+      "tagline": {
+        "pt": "O sistema onde a Pronix opera: CRM, financeiro, contratos e métricas do Mercado Livre em um só lugar.",
+        "en": "The system Pronix runs on: CRM, finance, contracts and Mercado Livre metrics in one place."
+      },
+      "problem": {
+        "pt": "A operação vivia espalhada em planilhas, ERP de terceiros e conversas de WhatsApp. Ninguém tinha a visão completa do cliente, e cada relatório era montado à mão.",
+        "en": "Operations were scattered across spreadsheets, a third-party ERP and WhatsApp threads. Nobody had the full picture of a customer, and every report was assembled by hand."
+      },
+      "solution": {
+        "pt": "Desenhei e construí uma plataforma full stack (Next.js + NestJS + PostgreSQL) que centraliza CRM, financeiro e jornada do cliente, com um dashboard de métricas alimentado pela API do Mercado Livre e contratos gerados automaticamente.",
+        "en": "I designed and built a full stack platform (Next.js + NestJS + PostgreSQL) that centralizes CRM, finance and the customer journey, with a metrics dashboard fed by the Mercado Livre API and automatically generated contracts."
+      },
+      "role": {
+        "pt": "Arquitetura, backend, frontend, deploy e treinamento dos times que usam o sistema.",
+        "en": "Architecture, backend, frontend, deployment and training for the teams that use it."
+      },
+      "results": [
+        {
+          "pt": "TODO: resultado mensurável (ex.: relatório semanal caiu de X horas para Y minutos)",
+          "en": "TODO: measurable result"
+        },
+        {
+          "pt": "TODO: adoção (ex.: N pessoas de M áreas usando diariamente)",
+          "en": "TODO: adoption"
+        }
+      ],
+      "metrics": [
+        {
+          "value": "TODO",
+          "label": {
+            "pt": "usuários diários",
+            "en": "daily users"
+          }
+        },
+        {
+          "value": "TODO",
+          "label": {
+            "pt": "módulos em produção",
+            "en": "modules in production"
+          }
+        }
+      ],
+      "stack": [
+        "Next.js",
+        "NestJS",
+        "PostgreSQL",
+        "Zustand",
+        "API Mercado Livre",
+        "n8n"
+      ],
+      "images": [
+        {
+          "src": "/projects/vdv-hub.png",
+          "alt": {
+            "pt": "Tela do Pronix Hub com dados de clientes",
+            "en": "Pronix Hub screen with customer data"
+          }
+        }
+      ],
+      "links": [],
+      "featured": true,
+      "confidential": true,
+      "status": "production",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "team",
+            "label": "Times internos",
+            "kind": "client",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "web",
+            "label": "Next.js",
+            "kind": "service",
+            "col": 1,
+            "row": 1
+          },
+          {
+            "id": "api",
+            "label": "NestJS API",
+            "kind": "service",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "db",
+            "label": "PostgreSQL",
+            "kind": "db",
+            "col": 3,
+            "row": 0
+          },
+          {
+            "id": "ml",
+            "label": "API Mercado Livre",
+            "kind": "external",
+            "col": 3,
+            "row": 1
+          },
+          {
+            "id": "n8n",
+            "label": "n8n",
+            "kind": "queue",
+            "col": 3,
+            "row": 2
+          },
+          {
+            "id": "ai",
+            "label": "Agentes de IA",
+            "kind": "ai",
+            "col": 4,
+            "row": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "team",
+            "to": "web"
+          },
+          {
+            "from": "web",
+            "to": "api",
+            "label": "REST"
+          },
+          {
+            "from": "api",
+            "to": "db"
+          },
+          {
+            "from": "api",
+            "to": "ml",
+            "label": "sync"
+          },
+          {
+            "from": "api",
+            "to": "n8n",
+            "label": "webhook"
+          },
+          {
+            "from": "n8n",
+            "to": "ai"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "ai-sdr-agent",
+      "title": "AI SDR Agent",
+      "category": {
+        "pt": "Agente de IA · Automação",
+        "en": "AI Agent · Automation"
+      },
+      "year": "2025",
+      "tagline": {
+        "pt": "Um SDR autônomo que recupera leads, agenda reuniões e gera contratos sem intervenção humana.",
+        "en": "An autonomous SDR that recovers leads, books meetings and generates contracts with no human in the loop."
+      },
+      "problem": {
+        "pt": "Leads esfriavam porque o time comercial não dava conta de responder rápido e de fazer follow-up com todo mundo.",
+        "en": "Leads went cold because the sales team could not reply fast enough or follow up with everyone."
+      },
+      "solution": {
+        "pt": "Um agente construído com n8n, LLMs, Supabase e Redis que conversa com o lead, qualifica, agenda a reunião e, quando fecha, gera o contrato. Memória de conversa em Redis e todo o histórico salvo no Supabase.",
+        "en": "An agent built with n8n, LLMs, Supabase and Redis that talks to the lead, qualifies them, books the meeting and, once closed, generates the contract. Conversation memory lives in Redis and the full history in Supabase."
+      },
+      "role": {
+        "pt": "Concepção, desenho dos fluxos, prompts, integrações e monitoramento.",
+        "en": "Concept, flow design, prompts, integrations and monitoring."
+      },
+      "results": [
+        {
+          "pt": "TODO: ex.: tempo de primeira resposta caiu de X horas para segundos",
+          "en": "TODO: e.g. first response time went from X hours to seconds"
+        },
+        {
+          "pt": "TODO: ex.: N leads recuperados / reuniões agendadas por mês",
+          "en": "TODO: e.g. N leads recovered / meetings booked per month"
+        }
+      ],
+      "metrics": [
+        {
+          "value": "24/7",
+          "label": {
+            "pt": "atendimento",
+            "en": "coverage"
+          }
+        },
+        {
+          "value": "TODO",
+          "label": {
+            "pt": "leads recuperados por mês",
+            "en": "leads recovered per month"
+          }
+        }
+      ],
+      "stack": [
+        "n8n",
+        "LLMs",
+        "Supabase",
+        "Redis",
+        "Webhooks"
+      ],
+      "images": [
+        {
+          "src": "/projects/ai-sdr.png",
+          "alt": {
+            "pt": "Fluxo do agente SDR no n8n",
+            "en": "SDR agent workflow in n8n"
+          }
+        }
+      ],
+      "links": [],
+      "featured": true,
+      "confidential": true,
+      "status": "production",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "lead",
+            "label": "Lead",
+            "kind": "client",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "n8n",
+            "label": "n8n",
+            "kind": "queue",
+            "col": 1,
+            "row": 1
+          },
+          {
+            "id": "llm",
+            "label": "LLM",
+            "kind": "ai",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "redis",
+            "label": "Redis · memória",
+            "kind": "db",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "supa",
+            "label": "Supabase",
+            "kind": "db",
+            "col": 2,
+            "row": 2
+          },
+          {
+            "id": "cal",
+            "label": "Agenda",
+            "kind": "external",
+            "col": 3,
+            "row": 0
+          },
+          {
+            "id": "contract",
+            "label": "Contrato",
+            "kind": "external",
+            "col": 3,
+            "row": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "lead",
+            "to": "n8n",
+            "label": "msg"
+          },
+          {
+            "from": "n8n",
+            "to": "llm"
+          },
+          {
+            "from": "n8n",
+            "to": "redis"
+          },
+          {
+            "from": "n8n",
+            "to": "supa"
+          },
+          {
+            "from": "llm",
+            "to": "cal"
+          },
+          {
+            "from": "supa",
+            "to": "contract"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "miu-controle",
+      "title": "Miu Controle",
+      "category": {
+        "pt": "Produto pessoal · Web + Mobile",
+        "en": "Side product · Web + Mobile"
+      },
+      "year": "2025",
+      "tagline": {
+        "pt": "Finanças pessoais sem fricção: registrar um gasto leva menos de 5 segundos, e a IA prevê o resto do mês.",
+        "en": "Frictionless personal finance: logging an expense takes under 5 seconds, and AI forecasts the rest of the month."
+      },
+      "problem": {
+        "pt": "Apps de finanças são abandonados porque registrar cada gasto dá trabalho demais.",
+        "en": "Finance apps get abandoned because logging every expense is too much work."
+      },
+      "solution": {
+        "pt": "Backend NestJS com cache em Redis e um modelo preditivo de gastos, servindo um app mobile e uma versão web. O fluxo de registro foi desenhado para caber em um toque.",
+        "en": "A NestJS backend with Redis caching and a predictive spending model, serving a mobile app and a web version. The logging flow was designed to fit in a single tap."
+      },
+      "role": {
+        "pt": "Produto inteiro: backend, frontend, modelagem de dados e deploy.",
+        "en": "The whole product: backend, frontend, data modeling and deployment."
+      },
+      "results": [
+        {
+          "pt": "Latência das rotas mais usadas reduzida em 93% com cache em Redis.",
+          "en": "93% lower latency on the busiest routes thanks to Redis caching."
+        },
+        {
+          "pt": "Registro de um gasto em menos de 5 segundos.",
+          "en": "An expense is logged in under 5 seconds."
+        }
+      ],
+      "metrics": [
+        {
+          "value": "−93%",
+          "label": {
+            "pt": "latência",
+            "en": "latency"
+          }
+        },
+        {
+          "value": "< 5s",
+          "label": {
+            "pt": "para registrar um gasto",
+            "en": "to log an expense"
+          }
+        }
+      ],
+      "stack": [
+        "NestJS",
+        "Redis",
+        "PostgreSQL",
+        "React",
+        "React Native",
+        "IA preditiva"
+      ],
+      "images": [
+        {
+          "src": "/projects/miu-controle.png",
+          "alt": {
+            "pt": "Telas do Miu Controle na web e no celular",
+            "en": "Miu Controle screens on web and mobile"
+          }
+        }
+      ],
+      "links": [
+        {
+          "label": {
+            "pt": "Código do backend",
+            "en": "Backend code"
+          },
+          "url": "https://github.com/Rafadegolin/miu-controle-backend"
+        },
+        {
+          "label": {
+            "pt": "Código do frontend",
+            "en": "Frontend code"
+          },
+          "url": "https://github.com/Rafadegolin/miu-controle-frontend"
+        }
+      ],
+      "featured": true,
+      "confidential": false,
+      "status": "side",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "mobile",
+            "label": "App mobile",
+            "kind": "client",
+            "col": 0,
+            "row": 0
+          },
+          {
+            "id": "web",
+            "label": "Web",
+            "kind": "client",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "api",
+            "label": "NestJS API",
+            "kind": "service",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "redis",
+            "label": "Redis · cache",
+            "kind": "db",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "pg",
+            "label": "PostgreSQL",
+            "kind": "db",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "ai",
+            "label": "IA preditiva",
+            "kind": "ai",
+            "col": 3,
+            "row": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "mobile",
+            "to": "api"
+          },
+          {
+            "from": "web",
+            "to": "api"
+          },
+          {
+            "from": "api",
+            "to": "redis",
+            "label": "−93%"
+          },
+          {
+            "from": "api",
+            "to": "pg"
+          },
+          {
+            "from": "api",
+            "to": "ai"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "vscode-ai-suite",
+      "title": "VS Code AI Suite",
+      "category": {
+        "pt": "Ferramentas para devs · IA",
+        "en": "Developer tools · AI"
+      },
+      "year": "2025",
+      "tagline": {
+        "pt": "Duas extensões de VS Code: uma que entende a arquitetura do projeto e outra que liga issues do GitHub ao código.",
+        "en": "Two VS Code extensions: one that understands a project's architecture and one that links GitHub issues to code."
+      },
+      "problem": {
+        "pt": "Entrar em um código desconhecido e encontrar onde uma issue precisa ser resolvida consome horas de leitura.",
+        "en": "Getting into an unfamiliar codebase and finding where an issue needs fixing eats hours of reading."
+      },
+      "solution": {
+        "pt": "Project Architect lê a AST do projeto e usa IA para explicar a estrutura. GitIssue Bridge traz as issues para dentro do editor e aponta os arquivos relacionados.",
+        "en": "Project Architect parses the project's AST and uses AI to explain its structure. GitIssue Bridge brings issues into the editor and points to the related files."
+      },
+      "role": {
+        "pt": "Projeto pessoal, do zero à publicação.",
+        "en": "Personal project, from scratch to release."
+      },
+      "results": [],
+      "metrics": [
+        {
+          "value": "2",
+          "label": {
+            "pt": "extensões",
+            "en": "extensions"
+          }
+        }
+      ],
+      "stack": [
+        "TypeScript",
+        "VS Code API",
+        "OpenAI",
+        "AST"
+      ],
+      "images": [],
+      "links": [
+        {
+          "label": {
+            "pt": "Project Architect",
+            "en": "Project Architect"
+          },
+          "url": "https://github.com/Rafadegolin/project-architect-ai"
+        },
+        {
+          "label": {
+            "pt": "GitIssue Bridge",
+            "en": "GitIssue Bridge"
+          },
+          "url": "https://github.com/Rafadegolin/gitIssue-bridge"
+        }
+      ],
+      "featured": false,
+      "confidential": false,
+      "status": "side",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "editor",
+            "label": "VS Code",
+            "kind": "client",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "ext",
+            "label": "Extensões",
+            "kind": "service",
+            "col": 1,
+            "row": 1
+          },
+          {
+            "id": "ast",
+            "label": "Parser AST",
+            "kind": "service",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "ai",
+            "label": "OpenAI",
+            "kind": "ai",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "gh",
+            "label": "GitHub Issues",
+            "kind": "external",
+            "col": 2,
+            "row": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "editor",
+            "to": "ext"
+          },
+          {
+            "from": "ext",
+            "to": "ast"
+          },
+          {
+            "from": "ext",
+            "to": "ai"
+          },
+          {
+            "from": "ext",
+            "to": "gh"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "fala-facilitada",
+      "title": "Fala Facilitada",
+      "category": {
+        "pt": "App mobile · TCC",
+        "en": "Mobile app · Thesis"
+      },
+      "year": "TODO",
+      "tagline": {
+        "pt": "App de comunicação alternativa (PECS) para pessoas autistas, que funciona 100% offline.",
+        "en": "An alternative communication (PECS) app for autistic people that works 100% offline."
+      },
+      "problem": {
+        "pt": "Pranchas de comunicação em papel são limitadas, e apps que dependem de internet falham justamente quando a pessoa mais precisa.",
+        "en": "Paper communication boards are limited, and apps that need internet fail exactly when the person needs them most."
+      },
+      "solution": {
+        "pt": "App em React Native com Expo, offline-first, com pranchas personalizáveis e foco em acessibilidade.",
+        "en": "A React Native app built with Expo, offline-first, with customizable boards and a focus on accessibility."
+      },
+      "role": {
+        "pt": "Trabalho de conclusão do curso de Engenharia da Computação.",
+        "en": "Final thesis project for my Computer Engineering degree."
+      },
+      "results": [],
+      "metrics": [
+        {
+          "value": "100%",
+          "label": {
+            "pt": "offline",
+            "en": "offline"
+          }
+        }
+      ],
+      "stack": [
+        "React Native",
+        "Expo",
+        "TypeScript"
+      ],
+      "images": [],
+      "links": [],
+      "featured": false,
+      "confidential": false,
+      "status": "archived",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "user",
+            "label": "Usuário",
+            "kind": "client",
+            "col": 0,
+            "row": 0
+          },
+          {
+            "id": "app",
+            "label": "React Native",
+            "kind": "service",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "store",
+            "label": "Armazenamento local",
+            "kind": "db",
+            "col": 2,
+            "row": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "user",
+            "to": "app"
+          },
+          {
+            "from": "app",
+            "to": "store",
+            "label": "offline"
+          }
+        ]
+      }
+    }
+  ],
+  "experiences": [
+    {
+      "company": "Pronix",
+      "role": {
+        "pt": "Desenvolvedor Full Stack",
+        "en": "Full Stack Developer"
+      },
+      "start": "2025-08",
+      "end": {
+        "pt": "Atual",
+        "en": "Present"
+      },
+      "summary": {
+        "pt": "Primeiro desenvolvedor do novo setor de tecnologia. Construo e mantenho os sistemas internos que a operação usa todos os dias.",
+        "en": "First developer in the new technology team. I build and maintain the internal systems the business uses every day."
+      },
+      "achievements": [
+        {
+          "pt": "Arquitetei e entreguei o Pronix Hub (Next.js + NestJS + PostgreSQL), que centraliza CRM, financeiro e jornada do cliente.",
+          "en": "Architected and shipped Pronix Hub (Next.js + NestJS + PostgreSQL), which centralizes CRM, finance and the customer journey."
+        },
+        {
+          "pt": "Integrei a API do Mercado Livre em um dashboard de métricas que substituiu relatórios montados à mão.",
+          "en": "Integrated the Mercado Livre API into a metrics dashboard that replaced hand-built reports."
+        },
+        {
+          "pt": "Automatizei contratos e CRM com n8n e agentes de IA.",
+          "en": "Automated contracts and CRM with n8n and AI agents."
+        },
+        {
+          "pt": "Treinei os times para adotar fluxos com IA no dia a dia.",
+          "en": "Trained teams to adopt AI-powered workflows in their daily work."
+        }
+      ],
+      "stack": [
+        "Next.js",
+        "NestJS",
+        "PostgreSQL",
+        "n8n",
+        "AI Agents"
+      ]
+    },
+    {
+      "company": "Pronix",
+      "role": {
+        "pt": "Especialista em Olist ERP",
+        "en": "Olist ERP Specialist"
+      },
+      "start": "2024-10",
+      "end": {
+        "pt": "Ago 2025",
+        "en": "Aug 2025"
+      },
+      "summary": {
+        "pt": "Implantação de ERP e operação. Foi aqui que mapeei os gargalos que depois resolvi com software.",
+        "en": "ERP rollout and operations. This is where I mapped the bottlenecks I later solved with software."
+      },
+      "achievements": [
+        {
+          "pt": "Implantei e organizei o catálogo de produtos no Olist ERP.",
+          "en": "Rolled out and organized the product catalog in Olist ERP."
+        },
+        {
+          "pt": "Treinei clientes para usar a plataforma de forma eficiente.",
+          "en": "Trained clients to use the platform efficiently."
+        },
+        {
+          "pt": "Criei dashboards e KPIs que agilizaram a operação diária.",
+          "en": "Built dashboards and KPIs that sped up daily operations."
+        }
+      ],
+      "stack": [
+        "Olist ERP",
+        "Análise de dados",
+        "Gestão de projetos"
+      ]
+    },
+    {
+      "company": "Motorola Mobility",
+      "role": {
+        "pt": "QA Tester & Dogfooding",
+        "en": "QA Tester & Dogfooding"
+      },
+      "start": "2022-01",
+      "end": {
+        "pt": "Set 2024",
+        "en": "Sep 2024"
+      },
+      "summary": {
+        "pt": "Qualidade de software em escala global: protótipos, um app Android e um portal web internos.",
+        "en": "Software quality at global scale: prototypes, an internal Android app and an internal web portal."
+      },
+      "achievements": [
+        {
+          "pt": "Gerenciei centenas de protótipos nos programas de Dogfooding.",
+          "en": "Managed hundreds of prototypes across Dogfooding programs."
+        },
+        {
+          "pt": "Testei o app Android e o portal web de uso interno.",
+          "en": "Tested the internal Android app and web portal."
+        },
+        {
+          "pt": "Contribuí para reduzir bugs em lançamentos globais.",
+          "en": "Helped reduce bugs in global launches."
+        },
+        {
+          "pt": "Melhorei a produtividade do time com práticas ágeis.",
+          "en": "Improved team productivity with agile practices."
+        }
+      ],
+      "stack": [
+        "QA",
+        "Android",
+        "Java/Kotlin",
+        "MySQL",
+        "Scrum",
+        "Jira"
+      ]
+    }
+  ],
+  "skillGroups": [
+    {
+      "title": {
+        "pt": "Frontend",
+        "en": "Frontend"
+      },
+      "items": [
+        {
+          "name": "React",
+          "context": {
+            "pt": "Pronix Hub, Miu Controle",
+            "en": "Pronix Hub, Miu Controle"
+          }
+        },
+        {
+          "name": "Next.js",
+          "context": {
+            "pt": "Pronix Hub, este site",
+            "en": "Pronix Hub, this site"
+          }
+        },
+        {
+          "name": "TypeScript",
+          "context": {
+            "pt": "Em todos os projetos",
+            "en": "Every project"
+          }
+        },
+        {
+          "name": "Tailwind CSS",
+          "context": {
+            "pt": "",
+            "en": ""
+          }
+        },
+        {
+          "name": "React Native / Expo",
+          "context": {
+            "pt": "Fala Facilitada, Miu Controle",
+            "en": "Fala Facilitada, Miu Controle"
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "pt": "Backend e dados",
+        "en": "Backend & data"
+      },
+      "items": [
+        {
+          "name": "Node.js / NestJS",
+          "context": {
+            "pt": "Em produção na Pronix",
+            "en": "In production at Pronix"
+          }
+        },
+        {
+          "name": "PostgreSQL",
+          "context": {
+            "pt": "Pronix Hub",
+            "en": "Pronix Hub"
+          }
+        },
+        {
+          "name": "Redis",
+          "context": {
+            "pt": "Cache e memória de agentes",
+            "en": "Caching and agent memory"
+          }
+        },
+        {
+          "name": "Supabase",
+          "context": {
+            "pt": "AI SDR Agent",
+            "en": "AI SDR Agent"
+          }
+        },
+        {
+          "name": "REST APIs",
+          "context": {
+            "pt": "Mercado Livre, integrações internas",
+            "en": "Mercado Livre, internal integrations"
+          }
+        },
+        {
+          "name": "Python",
+          "context": {
+            "pt": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "pt": "Automação e IA",
+        "en": "Automation & AI"
+      },
+      "items": [
+        {
+          "name": "n8n",
+          "context": {
+            "pt": "Contratos, CRM, agente SDR",
+            "en": "Contracts, CRM, SDR agent"
+          }
+        },
+        {
+          "name": "LLMs / OpenAI",
+          "context": {
+            "pt": "Agentes e extensões de VS Code",
+            "en": "Agents and VS Code extensions"
+          }
+        },
+        {
+          "name": "AI Agents",
+          "context": {
+            "pt": "Em produção na Pronix",
+            "en": "In production at Pronix"
+          }
+        },
+        {
+          "name": "Webhooks",
+          "context": {
+            "pt": "",
+            "en": ""
+          }
+        }
+      ]
+    },
+    {
+      "title": {
+        "pt": "Qualidade e processo",
+        "en": "Quality & process"
+      },
+      "items": [
+        {
+          "name": "QA",
+          "context": {
+            "pt": "3 anos na Motorola",
+            "en": "3 years at Motorola"
+          }
+        },
+        {
+          "name": "Scrum / Jira",
+          "context": {
+            "pt": "",
+            "en": ""
+          }
+        },
+        {
+          "name": "Git / GitHub",
+          "context": {
+            "pt": "",
+            "en": ""
+          }
+        },
+        {
+          "name": "Docker",
+          "context": {
+            "pt": "TODO: confirmar uso",
+            "en": "TODO: confirm"
+          }
+        }
+      ]
+    }
+  ],
+  "routine": [
+    {
+      "pt": "TODO: como começa seu dia (ex.: reviso alertas e métricas dos sistemas em produção)",
+      "en": "TODO"
+    },
+    {
+      "pt": "TODO: com quem você conversa (ex.: alinho prioridades com comercial e financeiro)",
+      "en": "TODO"
+    },
+    {
+      "pt": "TODO: quanto do dia é construção (ex.: blocos de foco para desenvolver e fazer deploy)",
+      "en": "TODO"
+    },
+    {
+      "pt": "TODO: como você fecha o ciclo (ex.: entrego, acompanho o uso e ajusto com quem usa)",
+      "en": "TODO"
+    }
+  ],
+  "principles": [
+    {
+      "title": {
+        "pt": "Entender a operação antes do código",
+        "en": "Understand the operation before the code"
+      },
+      "description": {
+        "pt": "Trabalhei do lado de quem usa o sistema. Antes de escrever uma linha, sento com quem vai usar e descubro onde o tempo está sendo perdido.",
+        "en": "I have worked on the side of the people who use the system. Before writing a line, I sit with them and find out where time is being lost."
+      }
+    },
+    {
+      "title": {
+        "pt": "Entregar cedo, medir, ajustar",
+        "en": "Ship early, measure, adjust"
+      },
+      "description": {
+        "pt": "Prefiro uma versão útil em produção a um sistema perfeito no papel. O feedback de quem usa decide o próximo passo.",
+        "en": "I prefer a useful version in production to a perfect system on paper. Feedback from real users decides what comes next."
+      }
+    },
+    {
+      "title": {
+        "pt": "Qualidade é hábito",
+        "en": "Quality is a habit"
+      },
+      "description": {
+        "pt": "Três anos de QA me ensinaram a pensar no que pode quebrar. Valido o caminho feliz e o caminho triste antes do deploy.",
+        "en": "Three years in QA taught me to think about what can break. I validate both the happy path and the unhappy one before deploying."
+      }
+    },
+    {
+      "title": {
+        "pt": "Automatizar o repetitivo",
+        "en": "Automate the repetitive"
+      },
+      "description": {
+        "pt": "Se uma tarefa se repete toda semana, vira fluxo no n8n ou um agente de IA. Gente boa deve gastar tempo com decisão, não com copiar e colar.",
+        "en": "If a task repeats every week, it becomes an n8n flow or an AI agent. Good people should spend time on decisions, not copy and paste."
+      }
+    }
+  ],
+  "workLog": [
+    {
+      "date": "2026-10",
+      "title": {
+        "pt": "TODO: o que você entregou recentemente",
+        "en": "TODO"
+      },
+      "description": {
+        "pt": "TODO: 1–2 frases sobre o problema e o resultado",
+        "en": "TODO"
+      },
+      "tags": []
+    }
+  ],
+  "education": [
+    {
+      "institution": "Fundação Hermínio Ometto",
+      "course": {
+        "pt": "Engenharia da Computação",
+        "en": "Computer Engineering"
+      },
+      "period": "2019 - 2024"
+    }
+  ],
+  "seo": {
+    "siteUrl": "https://rafadegolin-portfolio.vercel.app",
+    "title": {
+      "pt": "Rafael Degolin · Desenvolvedor Full Stack",
+      "en": "Rafael Degolin · Full Stack Developer"
+    },
+    "description": {
+      "pt": "Desenvolvedor Full Stack e Engenheiro da Computação. Construo sistemas internos, integrações e agentes de IA em produção com Next.js, NestJS, PostgreSQL e n8n.",
+      "en": "Full Stack Developer and Computer Engineer. I build internal systems, integrations and AI agents in production with Next.js, NestJS, PostgreSQL and n8n."
+    }
+  }
+}
