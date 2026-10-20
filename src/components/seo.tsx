@@ -1,6 +1,37 @@
 import type { Metadata } from "next";
-import { getContent, isPending, t, type Locale } from "@/content";
-import { htmlLang } from "@/content/dictionary";
+import { getContent, isPending, t, type Locale, type Project } from "@/content";
+import { htmlLang, projectPath } from "@/content/dictionary";
+
+function JsonLd({ data }: { data: object }) {
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
+    />
+  );
+}
+
+/** Case study como CreativeWork: ajuda o Google a ligar o projeto ao autor. */
+export function ProjectJsonLd({ project, locale }: { project: Project; locale: Locale }) {
+  const { profile, seo } = getContent();
+  const year = isPending(project.year) ? undefined : project.year;
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        name: project.title,
+        headline: t(project.tagline, locale),
+        description: t(project.solution, locale) || t(project.tagline, locale),
+        url: new URL(projectPath(locale, project.slug), seo.siteUrl).toString(),
+        inLanguage: htmlLang[locale],
+        ...(year ? { dateCreated: year } : {}),
+        keywords: project.stack.join(", "),
+        author: { "@type": "Person", name: profile.name, url: seo.siteUrl },
+      }}
+    />
+  );
+}
 
 /** Metadata com canonical + hreflang para uma página que existe nos dois idiomas. */
 export function buildMetadata({
@@ -50,10 +81,5 @@ export function PersonJsonLd({ locale }: { locale: Locale }) {
     ...(isPending(profile.email) ? {} : { email: `mailto:${profile.email}` }),
     sameAs: [profile.links.github, profile.links.linkedin].filter(Boolean),
   };
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
-    />
-  );
+  return <JsonLd data={data} />;
 }

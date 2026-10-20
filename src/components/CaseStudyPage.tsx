@@ -1,15 +1,15 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Lock } from "lucide-react";
 import { getContent, t, tList, visibleMetrics, type Locale } from "@/content";
-import { getDictionary, homePath, projectPath } from "@/content/dictionary";
+import { formatMonth, getDictionary, homePath, projectPath } from "@/content/dictionary";
 import { Nav, SECTION_IDS } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
-import { Container, Panel, Readout, StatusBadge, TagList } from "@/components/ui/primitives";
+import { Container, Panel, Readout, StatusBadge, TagList, buttonPrimary, buttonSecondary } from "@/components/ui/primitives";
+import { Gallery } from "@/components/ui/Gallery";
 import { InViewPauser } from "@/components/ui/InViewPauser";
 import { ArchitectureDiagram } from "@/components/diagram/ArchitectureDiagram";
-import { buildMetadata } from "@/components/seo";
+import { ProjectJsonLd, buildMetadata } from "@/components/seo";
 
 export function getProject(slug: string) {
   return getContent().projects.find((p) => p.slug === slug);
@@ -52,6 +52,16 @@ export function CaseStudyPage({ locale, slug }: { locale: Locale; slug: string }
   const nextProject = projects[(projects.indexOf(project) + 1) % projects.length];
   const otherLocale: Locale = locale === "pt" ? "en" : "pt";
   const year = project.year.startsWith("TODO") ? "" : project.year;
+  const context = t(project.context, locale);
+  const decisions = tList(project.decisions, locale);
+  const highlights = project.highlights.filter((h) => t(h.title, locale));
+  const timeline = project.timeline.filter((m) => m.date && t(m.label, locale));
+  const images = project.images
+    .filter((img) => img.src)
+    .map((img) => ({ src: img.src, alt: t(img.alt, locale), caption: img.caption ? t(img.caption, locale) : "" }));
+  // Numeração dos painéis acompanha só os que aparecem.
+  let panel = 0;
+  const nextIndex = () => String(++panel).padStart(2, "0");
 
   return (
     <>
@@ -92,6 +102,31 @@ export function CaseStudyPage({ locale, slug }: { locale: Locale; slug: string }
             >
               {t(project.tagline, locale)}
             </p>
+            {context && (
+              <p
+                className="boot mt-4 max-w-2xl font-mono text-xs leading-relaxed text-subtle"
+                style={{ "--i": 2 } as React.CSSProperties}
+              >
+                <span className="text-accent">{d.caseStudy.context} ·</span> {context}
+              </p>
+            )}
+            {links.length > 0 && (
+              <ul className="boot mt-8 flex flex-wrap gap-3" style={{ "--i": 3 } as React.CSSProperties}>
+                {links.map((l, i) => (
+                  <li key={l.url}>
+                    <a
+                      href={l.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={i === 0 ? buttonPrimary : buttonSecondary}
+                    >
+                      {t(l.label, locale)}
+                      <ArrowUpRight className="size-3.5" aria-hidden />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
 
             {metrics.length > 0 && (
               <dl className="boot mt-10 flex flex-wrap gap-x-12 gap-y-6" style={{ "--i": 3 } as React.CSSProperties}>
@@ -105,7 +140,7 @@ export function CaseStudyPage({ locale, slug }: { locale: Locale; slug: string }
 
         <Container className="flex flex-col gap-6 py-10 sm:gap-8 sm:py-14">
           {project.architecture.nodes.length > 0 && (
-            <Panel title={d.caseStudy.architecture} index="01" bodyClassName="flex justify-center overflow-x-auto bg-bg/60 p-4 sm:p-8">
+            <Panel title={d.caseStudy.architecture} index={nextIndex()}bodyClassName="flex justify-center overflow-x-auto bg-bg/60 p-4 sm:p-8">
               <div className="min-w-[560px] max-w-5xl flex-1">
                 <ArchitectureDiagram
                   architecture={project.architecture}
@@ -117,10 +152,40 @@ export function CaseStudyPage({ locale, slug }: { locale: Locale; slug: string }
             </Panel>
           )}
 
-          <Panel title={d.caseStudy.report} index="02" bodyClassName="">
+          {highlights.length > 0 && (
+            <Panel
+              title={d.caseStudy.highlights}
+              index={nextIndex()}
+              bodyClassName="grid grid-cols-1 gap-px bg-line md:grid-cols-2 xl:grid-cols-3"
+            >
+              {highlights.map((h, i) => (
+                <article key={i} className="reveal bg-panel p-5 sm:p-6">
+                  <p className="font-mono text-[11px] text-accent">{String(i + 1).padStart(2, "0")}</p>
+                  <h3 className="mt-3 text-lg font-semibold tracking-tight text-pretty">{t(h.title, locale)}</h3>
+                  <p className="mt-2 leading-relaxed text-muted text-pretty">{t(h.description, locale)}</p>
+                </article>
+              ))}
+            </Panel>
+          )}
+
+          <Panel title={d.caseStudy.report} index={nextIndex()} bodyClassName="">
             {t(project.problem, locale) && <ReportRow label={d.caseStudy.problem}>{t(project.problem, locale)}</ReportRow>}
             {t(project.solution, locale) && (
               <ReportRow label={d.caseStudy.solution}>{t(project.solution, locale)}</ReportRow>
+            )}
+            {decisions.length > 0 && (
+              <ReportRow label={d.caseStudy.decisions}>
+                <ul className="space-y-2.5">
+                  {decisions.map((r, i) => (
+                    <li key={i} className="grid grid-cols-[1.5rem_1fr]">
+                      <span className="font-mono text-accent" aria-hidden>
+                        →
+                      </span>
+                      {r}
+                    </li>
+                  ))}
+                </ul>
+              </ReportRow>
             )}
             {t(project.role, locale) && <ReportRow label={d.caseStudy.role}>{t(project.role, locale)}</ReportRow>}
             {results.length > 0 && (
@@ -140,6 +205,18 @@ export function CaseStudyPage({ locale, slug }: { locale: Locale; slug: string }
             <ReportRow label={d.caseStudy.stack}>
               <TagList items={project.stack} />
             </ReportRow>
+            {timeline.length > 0 && (
+              <ReportRow label={d.caseStudy.timeline}>
+                <ol className="space-y-2.5">
+                  {timeline.map((m, i) => (
+                    <li key={i} className="grid grid-cols-[6.5rem_1fr] gap-3">
+                      <span className="tabular pt-0.5 font-mono text-sm text-subtle">{formatMonth(m.date, locale)}</span>
+                      {t(m.label, locale)}
+                    </li>
+                  ))}
+                </ol>
+              </ReportRow>
+            )}
             {links.length > 0 && (
               <ReportRow label={d.caseStudy.links}>
                 <ul className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-sm">
@@ -161,25 +238,35 @@ export function CaseStudyPage({ locale, slug }: { locale: Locale; slug: string }
             )}
           </Panel>
 
-          {project.images.length > 0 && (
-            <Panel title={d.caseStudy.gallery} index="03" bodyClassName="grid grid-cols-1 gap-4 p-4 sm:p-6 md:grid-cols-2">
-              {project.images.map((img, i) => (
-                <div
-                  key={img.src}
-                  className={`relative aspect-[16/9] overflow-hidden border border-line bg-raised ${i === 0 ? "md:col-span-2" : ""}`}
-                >
-                  <Image
-                    src={img.src}
-                    alt={t(img.alt, locale)}
-                    fill
-                    priority={i === 0}
-                    sizes={i === 0 ? "(min-width: 1280px) 1200px, 100vw" : "(min-width: 768px) 600px, 100vw"}
-                    className="object-contain"
-                  />
-                </div>
-              ))}
+          {images.length > 0 && (
+            <Panel title={d.caseStudy.gallery} index={nextIndex()} meta={String(images.length)} bodyClassName="">
+              <Gallery
+                images={images}
+                labels={{
+                  open: d.caseStudy.openImage,
+                  close: d.caseStudy.closeImage,
+                  prev: d.caseStudy.prevImage,
+                  next: d.caseStudy.nextImage,
+                }}
+              />
             </Panel>
           )}
+
+          <section className="panel reveal flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-2xl">
+              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">{d.caseStudy.ctaTitle}</h2>
+              <p className="mt-3 leading-relaxed text-muted text-pretty">{d.caseStudy.ctaText}</p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link href={`${homePath(locale)}#${SECTION_IDS.contact}`} className={buttonPrimary}>
+                {d.caseStudy.ctaButton}
+                <ArrowRight className="size-3.5" aria-hidden />
+              </Link>
+              <Link href={`${homePath(locale)}#${SECTION_IDS.systems}`} className={buttonSecondary}>
+                {d.caseStudy.ctaSecondary}
+              </Link>
+            </div>
+          </section>
 
           {nextProject && nextProject !== project && (
             <Link
@@ -202,6 +289,7 @@ export function CaseStudyPage({ locale, slug }: { locale: Locale; slug: string }
       </main>
       <Footer locale={locale} />
       <InViewPauser />
+      <ProjectJsonLd project={project} locale={locale} />
     </>
   );
 }

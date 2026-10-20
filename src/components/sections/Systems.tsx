@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Lock } from "lucide-react";
 import { getContent, t, visibleMetrics, type Locale, type Project } from "@/content";
@@ -53,6 +54,23 @@ function Featured({ project, locale, n }: { project: Project; locale: Locale; n:
         </div>
       </div>
 
+      {project.cover && (
+        <Link
+          href={href}
+          tabIndex={-1}
+          aria-hidden
+          className="group relative mx-4 mb-6 block aspect-[16/7] overflow-hidden border border-line bg-raised sm:mx-6 lg:mx-8"
+        >
+          <Image
+            src={project.cover}
+            alt=""
+            fill
+            sizes="(min-width: 1280px) 1200px, 100vw"
+            className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+          />
+        </Link>
+      )}
+
       {project.architecture.nodes.length > 0 && (
         // Diagrama na largura toda; no celular rola na horizontal em vez de encolher.
         <div className="overflow-x-auto border-t border-line bg-bg/60 px-4 py-6 sm:px-6 lg:px-8">
@@ -103,8 +121,10 @@ function Row({ project, locale }: { project: Project; locale: Locale }) {
 export function Systems({ locale, index }: { locale: Locale; index: string }) {
   const d = getDictionary(locale);
   const { projects } = getContent();
-  const featured = projects.filter((p) => p.featured);
-  const others = projects.filter((p) => !p.featured);
+  const cases = projects.filter((p) => p.kind === "case");
+  const featured = cases.filter((p) => p.featured);
+  const others = cases.filter((p) => !p.featured);
+  const lab = projects.filter((p) => p.kind === "lab");
 
   return (
     <Panel
@@ -126,6 +146,19 @@ export function Systems({ locale, index }: { locale: Locale; index: string }) {
             <Row key={project.slug} project={project} locale={locale} />
           ))}
         </ul>
+      )}
+      {lab.length > 0 && (
+        <div className="border-t border-line">
+          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-line bg-bg/60 px-4 py-3 sm:px-6">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.14em] text-amber">// {d.systems.lab}</h3>
+            <p className="text-sm text-muted">{d.systems.labIntro}</p>
+          </div>
+          <ul>
+            {lab.map((project) => (
+              <Row key={project.slug} project={project} locale={locale} />
+            ))}
+          </ul>
+        </div>
       )}
     </Panel>
   );
